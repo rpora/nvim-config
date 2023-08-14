@@ -37,9 +37,9 @@ return require('packer').startup(function(use)
     end,
     as = 'rose-pine' })
 	use({'sainnhe/everforest',
-    config = function()
-        vim.cmd "colorscheme everforest"
-    end,
+    -- config = function()
+    --    vim.cmd "colorscheme everforest"
+    -- end,
     as = 'everforest'})
 	use({'shaunsingh/nord.nvim', as = 'nord'})
     use({"EdenEast/nightfox.nvim", as = "nightfox"}) -- Packer
