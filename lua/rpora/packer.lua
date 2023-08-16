@@ -18,41 +18,45 @@ end
 local packer_bootstrap = ensure_packer()
 
 return require('packer').startup(function(use)
-	use 'wbthomason/packer.nvim'
+    use 'wbthomason/packer.nvim'
 
-	use {
-		'nvim-telescope/telescope.nvim', tag = '0.1.2',
-		requires = { {'nvim-lua/plenary.nvim'} }
-	}
+    -- telescope
+    use {
+        'nvim-telescope/telescope.nvim', tag = '0.1.2',
+        requires = { {'nvim-lua/plenary.nvim'} }
+    }
 
-	use('nvim-treesitter/nvim-treesitter', {run = ':TSUpdate'})
-	use('theprimeagen/harpoon')
-	use('mbbill/undotree')
-	use('tpope/vim-fugitive')
-	use {
-		'VonHeikemen/lsp-zero.nvim',
-		branch = 'v2.x',
-		requires = {
-		-- LSP Support
-		{'neovim/nvim-lspconfig'},             -- Required
-		{'williamboman/mason.nvim'},           -- Optional
-		{'williamboman/mason-lspconfig.nvim'}, -- Optional
+    -- treesitter
+    use('nvim-treesitter/nvim-treesitter', {run = ':TSUpdate'})
+    use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' }
 
-		-- Autocompletion
-       		{'hrsh7th/nvim-cmp'},     -- Required
-		{'hrsh7th/cmp-nvim-lsp'}, -- Required
-		{'L3MON4D3/LuaSnip'},     -- Required
-		}
-	}
+    -- others
+    use('mbbill/undotree')
+    use('tpope/vim-fugitive')
 
-	use({'rose-pine/neovim',
-    config = function()
-        vim.cmd "colorscheme rose-pine"
-    end, as = 'rose-pine' })
-	use({'sainnhe/everforest', as = 'everforest'})
-	
-  if packer_bootstrap then
-    require('packer').sync()
-  end		
+    -- lsp
+    use {
+        'VonHeikemen/lsp-zero.nvim',
+        branch = 'v2.x',
+        requires = {
+            -- LSP Support
+            {'neovim/nvim-lspconfig'},             -- Required
+            {'williamboman/mason.nvim'},           -- Optional
+            {'williamboman/mason-lspconfig.nvim'}, -- Optional
+
+            -- Autocompletion
+            {'hrsh7th/nvim-cmp'},     -- Required
+            {'hrsh7th/cmp-nvim-lsp'}, -- Required
+            {'L3MON4D3/LuaSnip'},     -- Required
+        }
+    }
+
+    -- themes
+    use({'rose-pine/neovim',  as = 'rose-pine' })
+    use({'sainnhe/everforest', config = function() vim.cmd "colorscheme everforest" end, as = 'everforest'})
+
+    if packer_bootstrap then
+        require('packer').sync()
+    end
 end)
 
