@@ -16,3 +16,26 @@ vim.keymap.set("n", "N", "Nzzzv")
 -- Don't put the replaced value inside the register when pasted
 vim.keymap.set("x", "<leader>p", "\"_dP")
 
+-- Save file easily
+vim.keymap.set("n", "<leader>w", ":w<CR>")
+
+-- Move between buffers
+vim.keymap.set("n", "<leader>b", ":buffers<CR>:buffer<Space>")
+
+-- Copilot
+vim.g.copilot_no_tab_map = true
+vim.g.copilot_assumed_mapped = true
+
+vim.keymap.set('i', '<M-!>', '<Plug>(copilot-dismiss)')
+vim.keymap.set('i', '<M-;>', '<Plug>(copilot-next)')
+vim.keymap.set('i', '<M-,>', '<Plug>(copilot-previous)')
+vim.keymap.set(
+  "i", "<M-:>", 'copilot#Accept("<CR>")',
+  { silent = true, expr = true, noremap = true, replace_keycodes = false}
+)
+
+-- Undotree
+vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle)
+
+--  Fugitive
+vim.keymap.set("n", "<leader>gs", vim.cmd.Git)

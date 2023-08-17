@@ -51,6 +51,9 @@ return require('packer').startup(function(use)
         }
     }
 
+    -- Copilot 
+    use "github/copilot.vim"
+
     -- themes
     use({'rose-pine/neovim',  as = 'rose-pine' })
     use({'sainnhe/everforest', config = function() vim.cmd "colorscheme everforest" end, as = 'everforest'})
