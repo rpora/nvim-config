@@ -1,2 +1,2 @@
-require("rpora")
+require("plugins").setup()
 
