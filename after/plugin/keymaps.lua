@@ -3,10 +3,6 @@ local defaults_opts = { noremap = true, silent = true }
 -- Files explorer
 vim.keymap.set("n", "<leader>e", vim.cmd.Ex, { desc = "Explorer" })
 
--- Escape
-vim.keymap.set("i", "ne", "<ESC>", { noremap = true, silent = true })
-vim.keymap.set("t", "ne", "<C-\\><C-n>", { noremap = true, silent = true })
-
 -- Scroll at center of the screen
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
@@ -41,8 +37,14 @@ vim.keymap.set("n", "<leader>gs", vim.cmd.Git)
 -- Zen mode
 vim.keymap.set("n", "<leader>z", vim.cmd.ZenMode)
 
+-- Undo tree
+vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle)
+
 -- Hop
 vim.keymap.set("n", "<leader>n", vim.cmd.HopWord, { desc = "Hop" })
 vim.keymap.set("n", "<leader>h", vim.cmd.HopPattern, { desc = "HopPattern" })
 
 vim.keymap.set("n", "<leader>c", function() require('Comment.api').toggle.linewise.current() end, { noremap = true, silent = true })
+
+-- Terminate line with ;
+vim.keymap.set("n", "<leader>;", "A;<ESC>")

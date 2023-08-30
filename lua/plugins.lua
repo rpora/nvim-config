@@ -132,8 +132,8 @@ function M.setup()
             config = function()
                 require("copilot").setup({
                     suggestion = {
-                        enabled = true,
-                        auto_trigger = true,
+                        enabled = false,
+                        auto_trigger = false,
                         debounce = 75,
                         keymap = {
                             accept = "<M-i>",
@@ -156,15 +156,6 @@ function M.setup()
                 require("rest-nvim").setup({})
                 vim.keymap.set('n', '<leader>req', '<Plug>RestNvim', { noremap = false, silent = true })
             end
-        }
-
-        use {
-            "windwp/nvim-autopairs",
-            wants = "nvim-treesitter",
-            module = { "nvim-autopairs.completion.cmp", "nvim-autopairs" },
-            config = function()
-                require("config.autopairs").setup()
-            end,
         }
 
         -- theme

@@ -36,7 +36,7 @@ vim.opt.hidden = true
 
 vim.opt.clipboard = "unnamedplus"
 
--- Search: add all subdirectories from pwd 
+-- Search: add all subdirectories from pwd
 vim.opt.path:remove "/usr/include"
 vim.opt.path:append "**"
 
@@ -54,3 +54,7 @@ vim.cmd [[
 
 -- Netrw
 vim.g.netrw_banner = 0
+
+vim.api.nvim_set_hl(0, "CopilotAnnotation", { fg = "#79bcd7" })
+vim.api.nvim_set_hl(0, "CopilotSuggestion", { fg = "#79bcd7"})
+
