@@ -1,7 +1,9 @@
-local M = {}
-
-M.setup = function()
-    require'nvim-treesitter.configs'.setup {
+return { 
+    "nvim-treesitter/nvim-treesitter",
+    build = ":TSUpdate",
+    config = function()
+        local configs = require("nvim-treesitter.configs")
+        configs.setup({
         ensure_installed = {
            "javascript",
             "typescript",
@@ -14,16 +16,12 @@ M.setup = function()
             "vimdoc",
             "query"
         },
-
         sync_install = false,
         auto_install = true,
-
         highlight = {
             enable = true,
             additional_vim_regex_highlighting = false,
         },
-    }
+    })  
     end
-
-    return M
-
+}
