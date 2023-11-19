@@ -22,7 +22,7 @@ require("lazy").setup("plugins")
 vim.g.mapleader = " "
 vim.opt.nu = true
 vim.opt.relativenumber = true
-vim.opt.guicursor = 'n-v-c-sm:block,ci-ve:ver25,r-cr-o:hor20,i:block-blinkwait700-blinkoff400-blinkon250-Cursor/lCursor' 
+vim.opt.guicursor = 'n-v-c-sm:block,ci-ve:ver25,r-cr-o:hor20,i:block-blinkwait700-blinkoff400-blinkon250-Cursor/lCursor'
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
@@ -68,9 +68,9 @@ vim.cmd [[
 vim.g.netrw_banner = 0
 
 vim.api.nvim_set_hl(0, "CopilotAnnotation", { fg = "#79bcd7" })
-vim.api.nvim_set_hl(0, "CopilotSuggestion", { fg = "#79bcd7"})
+vim.api.nvim_set_hl(0, "CopilotSuggestion", { fg = "#79bcd7" })
 
-vim.opt.completeopt = {'menuone', 'noselect', 'noinsert'}
+vim.opt.completeopt = { 'menuone', 'noselect', 'noinsert' }
 
 
 
