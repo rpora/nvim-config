@@ -65,11 +65,7 @@ require('lazy').setup({
 
       -- Adds LSP completion capabilities
       'hrsh7th/cmp-nvim-lsp',
-      "hrsh7th/cmp-nvim-lua" ,
-      "hrsh7th/cmp-nvim-lsp-signature-help",
-      "hrsh7th/cmp-path" ,
       "hrsh7th/cmp-buffer" ,
-      'hrsh7th/cmp-cmdline' ,
 
       -- Adds a number of user-friendly snippets
       'rafamadriz/friendly-snippets',
@@ -95,9 +91,16 @@ require('lazy').setup({
         changedelete = { text = '~' },
       },
       on_attach = function(bufnr)
-        vim.keymap.set('n', '<leader>hp', require('gitsigns').preview_hunk, { buffer = bufnr, desc = 'Preview git hunk' })
+
+        local gs = package.loaded.gitsigns
+
+        vim.keymap.set('n', '<leader>hp', gs.preview_hunk, { buffer = bufnr, desc = 'Preview git hunk' })
+        vim.keymap.set('n', '<leader>hb', function ()
+          gs.blame_line{full = true}
+        end, { buffer = bufnr, desc = 'Preview git hunk' })
 
         -- don't override the built-in and fugitive keymaps
+        --
         local gs = package.loaded.gitsigns
         vim.keymap.set({ 'n', 'v' }, ']c', function()
           if vim.wo.diff then
@@ -159,20 +162,6 @@ require('lazy').setup({
   --       })
   --   end,
   -- },
-  {
-    -- Set lualine as statusline
-    'nvim-lualine/lualine.nvim',
-    -- See `:help lualine.txt`
-    opts = {
-      options = {
-        icons_enabled = false,
-        theme = 'kanagawa',
-        component_separators = '|',
-        section_separators = '',
-      },
-    },
-  },
-
   -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim', opts = {} },
 
@@ -202,9 +191,10 @@ require('lazy').setup({
   },
 
   -- require 'kickstart.plugins.autoformat',
-  -- require 'kickstart.plugins.debug',
+ require 'kickstart.plugins.debug',
   -- { import = 'custom.plugins' },
 }, {})
+
 
 -- [[ Setting options ]]
 -- See `:help vim.o`
@@ -243,7 +233,12 @@ vim.o.updatetime = 250
 vim.o.timeoutlen = 300
 
 -- Set completeopt to have a better completion experience
-vim.o.completeopt = 'menuone,noselect'
+vim.o.completeopt = 'menu,noselect'
+
+-- Disable the popup menu of the Ex bar
+vim.o.wildoptions = 'tagfile'
+vim.o.wildmenu=true
+vim.o.wildmode='full'
 
 vim.o.termguicolors = true
 vim.o.cursorline = true
@@ -270,6 +265,18 @@ vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnos
 vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 
+-- Buffer list--
+vim.keymap.set('n', '[b', ":bprev<CR>", { desc = 'Go to previous buffer' })
+vim.keymap.set('n', ']b', ":bnext<CR>", { desc = 'Go to next buffer' })
+vim.keymap.set('n', '[B', ":bfirst<CR>", { desc = 'Go to first buffer' })
+vim.keymap.set('n', ']B', ":blast<CR>", { desc = 'Go to last buffer' })
+
+-- Args list--
+vim.keymap.set('n', '[a', ":prev<CR>", { desc = 'Go to previous arg' })
+vim.keymap.set('n', ']a', ":next<CR>", { desc = 'Go to next arg' })
+vim.keymap.set('n', '[A', ":first<CR>", { desc = 'Go to first arg' })
+vim.keymap.set('n', ']A', ":last<CR>", { desc = 'Go to last arg' })
+
 local defaults_opts = { noremap = true, silent = true }
 
 -- Files explorer
@@ -286,6 +293,9 @@ vim.keymap.set("n", "N", "Nzz")
 -- Cancel search highlight
 vim.keymap.set("n", "<ESC>", ":nohlsearch<Bar>:echo<CR>", defaults_opts)
 
+-- Quit terminal insert mode
+vim.keymap.set("t", "<ESC>", "<C-\\><C-N>", defaults_opts)
+
 -- Resizing
 vim.keymap.set("n", "<C-Left>", ":vertical resize -5<CR>", defaults_opts)
 vim.keymap.set("n", "<C-Right>", ":vertical resize +5<CR>", defaults_opts)
@@ -297,9 +307,6 @@ vim.keymap.set("n", "<leader>z", vim.cmd.ZenMode, { desc = "Zen mode"})
 
 -- Undo tree
 vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle, { desc = "Undotree"})
-
--- Terminate line with ;
-vim.keymap.set("n", "<leader>;", "A;<ESC>")
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
@@ -400,10 +407,9 @@ vim.defer_fn(function()
     incremental_selection = {
       enable = true,
       keymaps = {
-        init_selection = '<c-space>',
-        node_incremental = '<c-space>',
-        scope_incremental = '<c-s>',
-        node_decremental = '<M-space>',
+        init_selection = '<M-e>',
+        node_incremental = '<M-e>',
+        node_decremental = '<M-n>',
       },
     },
     textobjects = {
@@ -440,22 +446,13 @@ vim.defer_fn(function()
           ['[]'] = '@class.outer',
         },
       },
-      swap = {
-        enable = true,
-        swap_next = {
-          ['<leader>a'] = '@parameter.inner',
-        },
-        swap_previous = {
-          ['<leader>A'] = '@parameter.inner',
-        },
-      },
     },
   }
 end, 0)
 
 -- [[ Configure LSP ]]
 
-vim.lsp.set_log_level("debug")
+-- vim.lsp.set_log_level("debug")
 
 --  This function gets run when an LSP connects to a particular buffer.
 local on_attach = function(_, bufnr)
@@ -618,27 +615,17 @@ cmp.setup {
   sources = cmp.config.sources({
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
-    { name = 'nvim_lsp_signature_help' },
   }, {
       { name = 'buffer' }
     }),
 }
 
-cmp.setup.cmdline({ '/', '?' }, {
-  mapping = cmp.mapping.preset.cmdline(),
-  sources = {
-    { name = 'buffer' }
-  }
-})
+-- Toggle relative line numbers
+function ToggleRelativeLinesNumbers()
+  vim.o.relativenumber = not vim.o.relativenumber
+end
 
-cmp.setup.cmdline(':', {
-  mapping = cmp.mapping.preset.cmdline(),
-  sources = cmp.config.sources({
-    { name = 'path' }
-  }, {
-      { name = 'cmdline' }
-    })
-})
+vim.keymap.set('n', '<leader>rl', ToggleRelativeLinesNumbers, { desc = "Toggle relative lines numbers"})
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et

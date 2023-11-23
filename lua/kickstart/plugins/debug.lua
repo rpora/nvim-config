@@ -2,14 +2,13 @@
 --
 -- Shows how to use the DAP plugin to debug your code.
 --
--- Primarily focused on configuring the debugger for Go, but can
+-- Primarily focused on configuring the dbugger for Go, but can
 -- be extended to other languages as well. That's why it's called
 -- kickstart.nvim and not kitchen-sink.nvim ;)
 
 return {
-  -- NOTE: Yes, you can install new plugins here!
   'mfussenegger/nvim-dap',
-  -- NOTE: And you can specify dependencies as well
+
   dependencies = {
     -- Creates a beautiful debugger UI
     'rcarriga/nvim-dap-ui',
@@ -20,29 +19,28 @@ return {
 
     -- Add your own debuggers here
     'leoluz/nvim-dap-go',
+    'mxsdev/nvim-dap-vscode-js',
+
+    {
+			"microsoft/vscode-js-debug",
+			version = "1.77",
+			build = "npm i && npm run compile vsDebugServerBundle && mv dist out"
+		}
   },
   config = function()
+
     local dap = require 'dap'
     local dapui = require 'dapui'
 
+
     require('mason-nvim-dap').setup {
-      -- Makes a best effort to setup the various debuggers with
-      -- reasonable debug configurations
       automatic_setup = true,
-
-      -- You can provide additional configuration to the handlers,
-      -- see mason-nvim-dap README for more information
       handlers = {},
-
-      -- You'll need to check that you have the required things installed
-      -- online, please don't ask me how to install them :)
       ensure_installed = {
-        -- Update this to ensure that you have the debuggers for the langs you want
         'delve',
       },
     }
 
-    -- Basic debugging keymaps, feel free to change to your liking!
     vim.keymap.set('n', '<F5>', dap.continue, { desc = 'Debug: Start/Continue' })
     vim.keymap.set('n', '<F1>', dap.step_into, { desc = 'Debug: Step Into' })
     vim.keymap.set('n', '<F2>', dap.step_over, { desc = 'Debug: Step Over' })
@@ -51,6 +49,7 @@ return {
     vim.keymap.set('n', '<leader>B', function()
       dap.set_breakpoint(vim.fn.input 'Breakpoint condition: ')
     end, { desc = 'Debug: Set Breakpoint' })
+
 
     -- Dap UI setup
     -- For more information, see |:help nvim-dap-ui|
@@ -83,5 +82,51 @@ return {
 
     -- Install golang specific config
     require('dap-go').setup()
+
+    require("dap-vscode-js").setup({
+			debugger_path = vim.fn.stdpath("data") .. "/lazy/vscode-js-debug",
+			adapters = { 'pwa-node', 'pwa-chrome', 'pwa-msedge', 'node-terminal', 'pwa-extensionHost' },
+		})
+    -- Js based languages
+    local js_lang = { "typescript", "javascript", "typescriptreact"}
+    for _, lang in ipairs(js_lang) do
+      dap.configurations[lang] = {
+        {
+          type = 'pwa-node',
+          request = 'launch',
+          name = 'Launch Current File (pwa-node)',
+          cwd = vim.fn.getcwd(),
+          args = { '${file}' },
+          sourceMaps = true,
+          protocol = 'inspector',
+        },
+        {
+          type = "pwa-node",
+          request = "attach",
+          name = "Attach",
+          processId = require 'dap.utils'.pick_process,
+          cwd = "${workspaceFolder}",
+          sourceMaps = true,
+          resolveSourceMapLocations = { "${workspaceFolder}/**", "!**/node_modules/**"},
+        },
+        {
+          type = "pwa-chrome",
+          request = "launch",
+          name = "Start Chrome with \"localhost\"",
+          url = "http://localhost:3000",
+          webRoot = "${workspaceFolder}",
+          userDataDir = "${workspaceFolder}/.vscode/vscode-chrome-debug-userdatadir"
+        },
+        {
+          name= "Launch via npm",
+          type= "pwa-node",
+          request= "launch",
+          cwd= "${workspaceFolder}",
+          runtimeExecutable= "npm",
+          runtimeArgs = {"run-script", "dev"}
+        }
+      }
+    end
+
   end,
 }
