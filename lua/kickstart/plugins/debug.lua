@@ -23,7 +23,6 @@ return {
 
     {
 			"microsoft/vscode-js-debug",
-			version = "1.77",
 			build = "npm i && npm run compile vsDebugServerBundle && mv dist out"
 		}
   },
@@ -84,8 +83,11 @@ return {
     require('dap-go').setup()
 
     require("dap-vscode-js").setup({
-			debugger_path = vim.fn.stdpath("data") .. "/lazy/vscode-js-debug",
-			adapters = { 'pwa-node', 'pwa-chrome', 'pwa-msedge', 'node-terminal', 'pwa-extensionHost' },
+      debugger_path = vim.fn.stdpath("data") .. "/lazy/vscode-js-debug",
+      adapters = { 'pwa-node', 'pwa-chrome', 'pwa-msedge', 'node-terminal', 'pwa-extensionHost' },
+      log_file_path = "/home/rpora/dap_vscode_js.log", -- Path for file logging
+      log_file_level = 0, -- Logging level for output to file. Set to false to disable file logging.
+      log_console_level = vim.log.levels.ERROR, -- Logging level for output to console. Set to false to disable console output.
 		})
     -- Js based languages
     local js_lang = { "typescript", "javascript", "typescriptreact"}
@@ -96,9 +98,7 @@ return {
           request = 'launch',
           name = 'Launch Current File (pwa-node)',
           cwd = vim.fn.getcwd(),
-          args = { '${file}' },
-          sourceMaps = true,
-          protocol = 'inspector',
+          program = '${file}',
         },
         {
           type = "pwa-node",
@@ -106,25 +106,7 @@ return {
           name = "Attach",
           processId = require 'dap.utils'.pick_process,
           cwd = "${workspaceFolder}",
-          sourceMaps = true,
-          resolveSourceMapLocations = { "${workspaceFolder}/**", "!**/node_modules/**"},
         },
-        {
-          type = "pwa-chrome",
-          request = "launch",
-          name = "Start Chrome with \"localhost\"",
-          url = "http://localhost:3000",
-          webRoot = "${workspaceFolder}",
-          userDataDir = "${workspaceFolder}/.vscode/vscode-chrome-debug-userdatadir"
-        },
-        {
-          name= "Launch via npm",
-          type= "pwa-node",
-          request= "launch",
-          cwd= "${workspaceFolder}",
-          runtimeExecutable= "npm",
-          runtimeArgs = {"run-script", "dev"}
-        }
       }
     end
 
