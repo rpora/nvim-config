@@ -1,26 +1,13 @@
--- debug.lua
---
--- Shows how to use the DAP plugin to debug your code.
---
--- Primarily focused on configuring the dbugger for Go, but can
--- be extended to other languages as well. That's why it's called
--- kickstart.nvim and not kitchen-sink.nvim ;)
-
 return {
   'mfussenegger/nvim-dap',
-
   dependencies = {
-    -- Creates a beautiful debugger UI
     'rcarriga/nvim-dap-ui',
-
-    -- Installs the debug adapters for you
     'williamboman/mason.nvim',
     'jay-babu/mason-nvim-dap.nvim',
 
-    -- Add your own debuggers here
+    -- debuggers
     'leoluz/nvim-dap-go',
     'mxsdev/nvim-dap-vscode-js',
-
     {
 			"microsoft/vscode-js-debug",
 			build = "npm i && npm run compile vsDebugServerBundle && mv dist out"
@@ -31,24 +18,20 @@ return {
     local dap = require 'dap'
     local dapui = require 'dapui'
 
-
     require('mason-nvim-dap').setup {
       automatic_setup = true,
       handlers = {},
-      ensure_installed = {
-        'delve',
-      },
     }
 
     vim.keymap.set('n', '<F5>', dap.continue, { desc = 'Debug: Start/Continue' })
     vim.keymap.set('n', '<F1>', dap.step_into, { desc = 'Debug: Step Into' })
     vim.keymap.set('n', '<F2>', dap.step_over, { desc = 'Debug: Step Over' })
     vim.keymap.set('n', '<F3>', dap.step_out, { desc = 'Debug: Step Out' })
+    vim.keymap.set('n', '<F7>', dapui.toggle, { desc = 'Debug: See last session result.' })
     vim.keymap.set('n', '<leader>b', dap.toggle_breakpoint, { desc = 'Debug: Toggle Breakpoint' })
     vim.keymap.set('n', '<leader>B', function()
       dap.set_breakpoint(vim.fn.input 'Breakpoint condition: ')
     end, { desc = 'Debug: Set Breakpoint' })
-
 
     -- Dap UI setup
     -- For more information, see |:help nvim-dap-ui|
@@ -73,7 +56,6 @@ return {
     }
 
     -- Toggle to see last session result. Without this, you can't see session output in case of unhandled exception.
-    vim.keymap.set('n', '<F7>', dapui.toggle, { desc = 'Debug: See last session result.' })
 
     dap.listeners.after.event_initialized['dapui_config'] = dapui.open
     dap.listeners.before.event_terminated['dapui_config'] = dapui.close
@@ -81,13 +63,18 @@ return {
 
     -- Install golang specific config
     require('dap-go').setup()
-
     require("dap-vscode-js").setup({
+      -- setup with lazy
       debugger_path = vim.fn.stdpath("data") .. "/lazy/vscode-js-debug",
-      adapters = { 'pwa-node', 'pwa-chrome', 'pwa-msedge', 'node-terminal', 'pwa-extensionHost' },
-      log_file_path = "/home/rpora/dap_vscode_js.log", -- Path for file logging
-      log_file_level = 0, -- Logging level for output to file. Set to false to disable file logging.
-      log_console_level = vim.log.levels.ERROR, -- Logging level for output to console. Set to false to disable console output.
+
+      -- setup with mason
+      -- debugger_path = vim.fn.stdpath('data') .. '/mason/packages/js-debug-adapter',
+      -- debugger_cmd = { 'js-debug-adapter' },
+
+      adapters = { 'pwa-node' },
+      -- log_file_path = "/home/rpora/dap_vscode_js.log", -- Path for file logging
+      -- log_file_level = 0, -- Logging level for output to file. Set to false to disable file logging.
+      -- log_console_level = vim.log.levels.ERROR, -- Logging level for output to console. Set to false to disable console output.
 		})
     -- Js based languages
     local js_lang = { "typescript", "javascript", "typescriptreact"}
