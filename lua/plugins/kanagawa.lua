@@ -1,1 +1,17 @@
-return  {"rebelot/kanagawa.nvim", init = function() vim.cmd "colorscheme kanagawa" end }
+return  {
+    "rebelot/kanagawa.nvim",
+    config = function()
+        require('kanagawa').setup({
+            colors = {
+                theme = {
+                    all = {
+                        ui = {
+                            bg_gutter = 'none'
+                        }
+                    }
+                }
+            }
+        })
+    end,
+    init = function() vim.cmd "colorscheme kanagawa" end
+}

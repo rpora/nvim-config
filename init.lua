@@ -22,7 +22,6 @@ require("lazy").setup("plugins")
 vim.g.mapleader = " "
 vim.opt.nu = true
 vim.opt.relativenumber = true
-vim.opt.guicursor = 'n-v-c-sm:block,ci-ve:ver25,r-cr-o:hor20,i:block-blinkwait700-blinkoff400-blinkon250-Cursor/lCursor' 
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
@@ -50,7 +49,7 @@ vim.opt.timeoutlen = 500
 
 vim.opt.colorcolumn = "80"
 vim.opt.signcolumn = "yes"
--- vim.opt.cursorline = true
+vim.opt.cursorline = true
 
 vim.opt.hidden = true
 
@@ -72,10 +71,7 @@ vim.api.nvim_set_hl(0, "CopilotSuggestion", { fg = "#79bcd7"})
 
 vim.opt.completeopt = {'menuone', 'noselect', 'noinsert'}
 
-
-
 ----------- keymaps
-
 local defaults_opts = { noremap = true, silent = true }
 
 -- Files explorer
@@ -94,7 +90,7 @@ vim.keymap.set("x", "<leader>p", "\"_dP")
 
 -- Save file
 vim.keymap.set("n", "<leader>w", ":w<CR>")
-vim.keymap.set("", "<leader>q", ":q<CR>")
+vim.keymap.set("n", "<leader>q", ":q<CR>")
 
 -- Switch Buffer
 vim.keymap.set("n", "<C-h>", ":bprevious<CR>", defaults_opts)
@@ -117,3 +113,9 @@ vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle)
 
 -- Terminate line with ;
 vim.keymap.set("n", "<leader>;", "A;<ESC>")
+
+-- Make 
+vim.keymap.set("n", "<F5>", vim.cmd.make)
+
+-- Quit terminal insert mode with ESC
+vim.keymap.set("t", "<ESC>", "<C-\\><C-n>")
