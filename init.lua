@@ -17,10 +17,19 @@ vim.opt.rtp:prepend(lazypath)
 -- [[ Plugins ]]
 require('lazy').setup({
   'tpope/vim-fugitive',
+
+  -- 'lewis6991/gitsigns.nvim',
+
   'tpope/vim-surround',
   'folke/zen-mode.nvim',
   'mbbill/undotree',
-  { 'numToStr/Comment.nvim', opts = {} },
+
+  {'numToStr/Comment.nvim', opts = {}},
+  {
+    "folke/todo-comments.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    opts = {}
+  },
   { "windwp/nvim-autopairs", event = "InsertEnter", opts = {} },
   { 'folke/which-key.nvim', opts = {} },
   { 'stevearc/oil.nvim'},
@@ -86,6 +95,36 @@ require('lazy').setup({
     build = ':TSUpdate',
   },
 
+  -- Godot
+  'habamax/vim-godot',
+
+  -- Css colors
+  {
+    'NvChad/nvim-colorizer.lua',
+    init = function()
+      require("colorizer").setup {
+        filetypes = { "*" },
+        user_default_options = {
+          RGB = true,
+          RRGGBB = true,
+          names = true,
+          RRGGBBAA = true,
+          rgb_fn = true,
+          hsl_fn = true,
+          mode = "virtualtext", -- Set the display mode.
+          -- Available methods are false / true / "normal" / "lsp" / "both"
+          -- True is same as normal
+          tailwind = false, -- Enable tailwind colors
+          sass = { enable = true, parsers = { "css" }, }, -- Enable sass colors
+          virtualtext = "■",
+          always_update = false
+        },
+        -- all the sub-options of filetypes apply to buftypes
+        buftypes = {},
+      }
+    end
+  },
+
  require 'kickstart.plugins.debug',
   -- { import = 'custom.plugins' },
 }, {})
@@ -111,6 +150,9 @@ vim.o.timeoutlen = 300
 vim.o.completeopt = 'menu,noselect'
 vim.o.wildoptions = 'tagfile'
 vim.o.wildmenu=true
+
+-- Ceci est un test
+
 vim.o.wildmode='full'
 vim.o.termguicolors = true
 vim.o.splitright = true
@@ -337,14 +379,6 @@ local on_attach = function(_, bufnr)
   nmap('K', vim.lsp.buf.hover, 'Hover Documentation')
   nmap('<C-k>', vim.lsp.buf.signature_help, 'Signature Documentation')
 
-  -- Lesser used LSP functionality
-  nmap('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
-  nmap('<leader>wa', vim.lsp.buf.add_workspace_folder, '[W]orkspace [A]dd Folder')
-  nmap('<leader>wr', vim.lsp.buf.remove_workspace_folder, '[W]orkspace [R]emove Folder')
-  nmap('<leader>wl', function()
-    print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-  end, '[W]orkspace [L]ist Folders')
-
   -- Create a command `:Format` local to the LSP buffer
   vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
     vim.lsp.buf.format()
@@ -475,5 +509,8 @@ require('oil').setup({
     show_hidden= true
   }
 });
+
+-- Setup Godot LSP
+require('lspconfig').gdscript.setup{  capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())}
 
 -- vim: ts=2 sts=2 sw=2 et
