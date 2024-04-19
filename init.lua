@@ -20,7 +20,60 @@ require("lazy").setup({
 
   -- Git integration
   "tpope/vim-fugitive",
-  { "lewis6991/gitsigns.nvim", opts = {} },
+
+  {
+    "lewis6991/gitsigns.nvim",
+    config = function()
+      require("gitsigns").setup({
+
+        on_attach = function(bufnr)
+          local gitsigns = require("gitsigns")
+
+          local function map(mode, l, r, opts)
+            opts = opts or {}
+            opts.buffer = bufnr
+            vim.keymap.set(mode, l, r, opts)
+          end
+
+          -- Navigation between hunks
+          map("n", "]c", function()
+            if vim.wo.diff then
+              vim.cmd.normal({ "]c", bang = true })
+            else
+              gitsigns.nav_hunk("next")
+            end
+          end)
+
+          map("n", "[c", function()
+            if vim.wo.diff then
+              vim.cmd.normal({ "[c", bang = true })
+            else
+              gitsigns.nav_hunk("prev")
+            end
+          end)
+
+          -- Actions
+          -- reset hunk line or selection
+          map("n", "<leader>hr", gitsigns.reset_hunk)
+          map("v", "<leader>hr", function()
+            gitsigns.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
+          end)
+
+          map("n", "<leader>hp", gitsigns.preview_hunk)
+          map("n", "<leader>hb", function()
+            gitsigns.blame_line({ full = true })
+          end)
+          map("n", "<leader>tb", gitsigns.toggle_current_line_blame)
+
+          map("n", "<leader>hd", gitsigns.diffthis)
+          map("n", "<leader>hD", function()
+            gitsigns.diffthis("~")
+          end)
+
+        end,
+      })
+    end,
+  },
 
   -- Surround commands
   "tpope/vim-surround",
@@ -87,8 +140,15 @@ require("lazy").setup({
     opts = {
       notify_on_error = false,
       formatters_by_ft = {
+        python = function(bufnr)
+          if require("conform").get_formatter_info("ruff_format", bufnr).available then
+            return { "ruff_format" }
+          else
+            return { "isort", "black" }
+          end
+        end,
         lua = { "stylua" },
-        javascript = { "prettierd" },
+        javascript = { "prettier" },
       },
     },
   },
@@ -155,6 +215,22 @@ require("lazy").setup({
         rust_analyzer = {},
         tsserver = {},
         html = {},
+        yamlls = {
+          settings = {
+            yaml = {
+              validate = true,
+              schemaStore = {
+                enable = false,
+                url = "",
+              },
+              schemas = {
+                ["https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.29.4/all.json"] = "/*.{yml,yaml}",
+                ["https://json.schemastore.org/kustomization.json"] = "kustomization.{yml,yaml}",
+                ["https://raw.githubusercontent.com/docker/compose/master/compose/config/compose_spec.json"] = "docker-compose*.{yml,yaml}",
+              },
+            },
+          },
+        },
         lua_ls = {
           settings = {
             Lua = {
