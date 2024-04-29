@@ -69,7 +69,6 @@ require("lazy").setup({
           map("n", "<leader>hD", function()
             gitsigns.diffthis("~")
           end)
-
         end,
       })
     end,
@@ -83,6 +82,17 @@ require("lazy").setup({
 
   -- Auto-save
   "pocco81/AutoSave.nvim",
+
+  -- Copilot
+  {
+    "github/copilot.vim",
+    config = function()
+      vim.api.nvim_set_hl(0, "CopilotSuggestion", {
+        fg = "#54A9A4",
+        ctermfg = 8,
+      })
+    end,
+  },
 
   -- Flash
   {
@@ -121,6 +131,21 @@ require("lazy").setup({
           show_hidden = true,
         },
       })
+    end,
+  },
+
+  -- Rest client
+  {
+    "vhyrro/luarocks.nvim",
+    priority = 1000,
+    config = true,
+  },
+  {
+    "rest-nvim/rest.nvim",
+    ft = "http",
+    dependencies = { "luarocks.nvim" },
+    config = function()
+      require("rest-nvim").setup()
     end,
   },
 
@@ -224,9 +249,9 @@ require("lazy").setup({
                 url = "",
               },
               schemas = {
-                ["https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.29.4/all.json"] = "/*.{yml,yaml}",
-                ["https://json.schemastore.org/kustomization.json"] = "kustomization.{yml,yaml}",
+                ["https://gitlab.com/gitlab-org/gitlab/-/raw/master/app/assets/javascripts/editor/schema/ci.json"] = ".gitlab-ci.yml",
                 ["https://raw.githubusercontent.com/docker/compose/master/compose/config/compose_spec.json"] = "docker-compose*.{yml,yaml}",
+                -- ["https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.29.4/all.json"] = "*.{yml,yaml}",
               },
             },
           },
@@ -300,7 +325,6 @@ require("lazy").setup({
           ["<C-f>"] = cmp.mapping.scroll_docs(4),
           ["<C-Space>"] = cmp.mapping.complete({}),
           ["<C-y>"] = cmp.mapping.confirm({
-            behavior = cmp.ConfirmBehavior.Replace,
             select = true,
           }),
           ["<C-l>"] = cmp.mapping(function()
@@ -528,6 +552,9 @@ vim.opt.expandtab = true
 -- save history
 vim.o.undofile = true
 
+-- disable swap files, as we auto-save when quitting insert mode
+vim.o.swapfile = false
+
 -- search
 vim.o.hlsearch = true
 vim.o.ignorecase = true
@@ -592,10 +619,10 @@ vim.keymap.set("n", "<C-Up>", "<C-w><C-k>")
 vim.keymap.set("n", "<C-Down>", "<C-w><C-j>")
 
 -- Resizing Windows
-vim.keymap.set("n", "<C-M-Left>", ":vertical resize -5<CR>")
-vim.keymap.set("n", "<C-M-Right>", ":vertical resize +5<CR>")
-vim.keymap.set("n", "<C-M-Up>", ":resize +5<CR>")
-vim.keymap.set("n", "<C-M-Down>", ":resize -5<CR>")
+vim.keymap.set("n", "<C-S-Left>", ":vertical resize -5<CR>")
+vim.keymap.set("n", "<C-S-Right>", ":vertical resize +5<CR>")
+vim.keymap.set("n", "<C-S-Up>", ":resize +5<CR>")
+vim.keymap.set("n", "<C-S-Down>", ":resize -5<CR>")
 
 -- Zen mode
 vim.keymap.set("n", "<leader>z", vim.cmd.ZenMode, { desc = "Zen mode" })
