@@ -21,69 +21,13 @@ require("lazy").setup({
   -- Git integration
   "tpope/vim-fugitive",
 
-  {
-    "lewis6991/gitsigns.nvim",
-    config = function()
-      require("gitsigns").setup({
-
-        on_attach = function(bufnr)
-          local gitsigns = require("gitsigns")
-
-          local function map(mode, l, r, opts)
-            opts = opts or {}
-            opts.buffer = bufnr
-            vim.keymap.set(mode, l, r, opts)
-          end
-
-          -- Navigation between hunks
-          map("n", "]c", function()
-            if vim.wo.diff then
-              vim.cmd.normal({ "]c", bang = true })
-            else
-              gitsigns.nav_hunk("next")
-            end
-          end)
-
-          map("n", "[c", function()
-            if vim.wo.diff then
-              vim.cmd.normal({ "[c", bang = true })
-            else
-              gitsigns.nav_hunk("prev")
-            end
-          end)
-
-          -- Actions
-          -- reset hunk line or selection
-          map("n", "<leader>hr", gitsigns.reset_hunk)
-          map("v", "<leader>hr", function()
-            gitsigns.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
-          end)
-
-          map("n", "<leader>hp", gitsigns.preview_hunk)
-          map("n", "<leader>hb", function()
-            gitsigns.blame_line({ full = true })
-          end)
-          map("n", "<leader>tb", gitsigns.toggle_current_line_blame)
-
-          map("n", "<leader>hd", gitsigns.diffthis)
-          map("n", "<leader>hD", function()
-            gitsigns.diffthis("~")
-          end)
-        end,
-      })
-    end,
-  },
-
   -- Surround commands
   "tpope/vim-surround",
 
   -- Undo tree
   "mbbill/undotree",
 
-  -- Auto-save
-  "pocco81/AutoSave.nvim",
-
-  -- -- Copilot
+  -- Copilot
   {
     "github/copilot.vim",
     config = function()
@@ -97,36 +41,18 @@ require("lazy").setup({
   -- Custom Parameters (with defaults)
   {
     "David-Kunz/gen.nvim",
+    init = function()
+      -- require("gen").prompts["Documentation"] = {
+      --   prompt = "Generate the code documentation for this text: \n$text."
+      --     .. "Take in account the type of the file $filetype"
+      --     .. "Generate only the code, without any other information, so it can be used in the code itself.",
+      --   replace = true,
+      -- }
+    end,
     opts = {
       model = "llama3", -- The default model to use.
-      host = "localhost", -- The host running the Ollama service.
-      port = "11434", -- The port on which the Ollama service is listening.
-      quit_map = "q", -- set keymap for close the response window
-      retry_map = "<c-r>", -- set keymap to re-send the current prompt
-
-      init = function(options)
-        pcall(io.popen, "ollama serve > /dev/null 2>&1 &")
-      end,
-
-      -- Function to initialize Ollama
-      command = function(options)
-        local body = { model = options.model, stream = true }
-        return "curl --silent --no-buffer -X POST http://"
-          .. options.host
-          .. ":"
-          .. options.port
-          .. "/api/chat -d $body"
-      end,
-      -- The command for the Ollama service. You can use placeholders $prompt, $model and $body (shellescaped).
-      -- This can also be a command string.
-      -- The executed command must return a JSON object with { response, context }
-      -- (context property is optional).
-      -- list_models = '<omitted lua function>', -- Retrieves a list of model names
-      display_mode = "split", -- The display mode. Can be "float" or "split".
-      show_prompt = false, -- Shows the prompt submitted to Ollama.
-      show_model = false, -- Displays which model you are using at the beginning of your chat session.
+      display_mode = "float", -- The display mode. Can be "float" or "split".
       no_auto_close = true, -- Never closes the window automatically.
-      debug = false, -- Prints errors and the command which is run.
     },
   },
 
@@ -199,6 +125,11 @@ require("lazy").setup({
       },
     },
     opts = {
+      format_on_save = {
+        -- I recommend these options. See :help conform.format for details.
+        lsp_fallback = true,
+        timeout_ms = 500,
+      },
       notify_on_error = false,
       formatters_by_ft = {
         python = function(bufnr)
@@ -210,6 +141,7 @@ require("lazy").setup({
         end,
         lua = { "stylua" },
         javascript = { "prettier" },
+        typescript = { "prettier" },
       },
     },
   },
@@ -388,25 +320,18 @@ require("lazy").setup({
     end,
   },
 
+  -- -- Tmux inclusion
+  -- { "alexghergh/nvim-tmux-navigation" },
+
   -- Zen mode
   "folke/zen-mode.nvim",
 
   -- Theme
   {
-    "rebelot/kanagawa.nvim",
+    "rose-pine/neovim",
+    name = "rose-pine",
     init = function()
-      require("kanagawa").setup({
-        colors = {
-          theme = {
-            all = {
-              ui = {
-                bg_gutter = "none",
-              },
-            },
-          },
-        },
-      })
-      vim.cmd("colorscheme kanagawa")
+      vim.cmd("colorscheme rose-pine")
     end,
   },
 
@@ -593,6 +518,7 @@ vim.o.swapfile = false
 
 -- search
 vim.o.hlsearch = true
+vim.o.incsearch = true
 vim.o.ignorecase = true
 vim.o.smartcase = true
 
@@ -631,6 +557,9 @@ vim.keymap.set("n", "]d", vim.diagnostic.goto_next)
 vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float)
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist)
 
+-- Save
+vim.keymap.set("n", "<leader>w", ":w<CR>")
+
 -- Files explorer
 vim.keymap.set("n", "<leader>e", ":Oil<CR>")
 
@@ -654,14 +583,14 @@ vim.keymap.set("n", "<C-Right>", "<C-w><C-l>")
 vim.keymap.set("n", "<C-Up>", "<C-w><C-k>")
 vim.keymap.set("n", "<C-Down>", "<C-w><C-j>")
 
+-- Zen mode
+vim.keymap.set("n", "<leader>z", vim.cmd.ZenMode, { desc = "Zen mode" })
+
 -- Resizing Windows
 vim.keymap.set("n", "<C-S-Left>", ":vertical resize -5<CR>")
 vim.keymap.set("n", "<C-S-Right>", ":vertical resize +5<CR>")
 vim.keymap.set("n", "<C-S-Up>", ":resize +5<CR>")
 vim.keymap.set("n", "<C-S-Down>", ":resize -5<CR>")
-
--- Zen mode
-vim.keymap.set("n", "<leader>z", vim.cmd.ZenMode, { desc = "Zen mode" })
 
 -- Undo tree
 vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle, { desc = "Undotree" })
