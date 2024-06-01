@@ -37,23 +37,13 @@ require("lazy").setup({
       })
     end,
   },
-
-  -- Custom Parameters (with defaults)
   {
-    "David-Kunz/gen.nvim",
-    init = function()
-      -- require("gen").prompts["Documentation"] = {
-      --   prompt = "Generate the code documentation for this text: \n$text."
-      --     .. "Take in account the type of the file $filetype"
-      --     .. "Generate only the code, without any other information, so it can be used in the code itself.",
-      --   replace = true,
-      -- }
-    end,
-    opts = {
-      model = "llama3", -- The default model to use.
-      display_mode = "float", -- The display mode. Can be "float" or "split".
-      no_auto_close = true, -- Never closes the window automatically.
+    "CopilotC-Nvim/CopilotChat.nvim",
+    dependencies = {
+      { "github/copilot.vim" }, -- or github/copilot.vim
+      { "nvim-lua/plenary.nvim" }, -- for curl, log wrapper
     },
+    opts = {},
   },
 
   -- Flash
