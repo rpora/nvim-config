@@ -320,17 +320,23 @@ require("lazy").setup({
     end,
   },
 
-  -- -- Tmux inclusion
-  -- { "alexghergh/nvim-tmux-navigation" },
-
   -- Zen mode
   "folke/zen-mode.nvim",
+
+  -- Tmux panes navigation
+  "christoomey/vim-tmux-navigator",
 
   -- Theme
   {
     "rose-pine/neovim",
     name = "rose-pine",
     init = function()
+      require("rose-pine").setup({
+        styles = {
+          bold = true,
+          italic = false,
+        },
+      })
       vim.cmd("colorscheme rose-pine")
     end,
   },
@@ -499,6 +505,8 @@ require("lazy").setup({
 
 -- [[ Setting options ]]
 
+vim.o.clipboard = "unnamedplus"
+
 -- lines numbers
 vim.o.number = true
 vim.o.relativenumber = true
@@ -577,11 +585,16 @@ vim.keymap.set("n", "<ESC>", ":nohlsearch<Bar>:echo<CR>")
 -- Quit terminal insert mode
 vim.keymap.set("t", "<ESC>", "<C-\\><C-N>")
 
--- Navigating beetween Windows
-vim.keymap.set("n", "<C-Left>", "<C-w><C-h>")
-vim.keymap.set("n", "<C-Right>", "<C-w><C-l>")
-vim.keymap.set("n", "<C-Up>", "<C-w><C-k>")
-vim.keymap.set("n", "<C-Down>", "<C-w><C-j>")
+-- Navigating beetween Windows and panes
+vim.keymap.set("n", "<C-Left>", "<c-w>h")
+vim.keymap.set("n", "<C-Right>", "<c-w>l")
+vim.keymap.set("n", "<C-Up>", "<c-w>k")
+vim.keymap.set("n", "<C-Down>", "<c-w>j")
+
+vim.keymap.set("n", "<C-Left>", ":TmuxNavigateLeft<CR>", { silent = true })
+vim.keymap.set("n", "<C-Right>", ":TmuxNavigateRight<CR>", { silent = true })
+vim.keymap.set("n", "<C-Up>", ":TmuxNavigateUp<CR>", { silent = true })
+vim.keymap.set("n", "<C-Down>", ":TmuxNavigateDown<CR>", { silent = true })
 
 -- Zen mode
 vim.keymap.set("n", "<leader>z", vim.cmd.ZenMode, { desc = "Zen mode" })
