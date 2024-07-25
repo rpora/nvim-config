@@ -18,3 +18,13 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup("plugins")
 require("keymaps")
 require("settings")
+
+-- vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
+--   pattern = "%/templates/**/*.html", -- Adjust the path as needed
+--   callback = function()
+--     local clients = vim.lsp.get_active_clients({ name = "html" })
+--     if next(clients) == nil then
+--       vim.cmd('lua require"lspconfig".html.setup{}')
+--     end
+--   end,
+-- })

@@ -51,8 +51,10 @@ return {
         gopls = {},
         rust_analyzer = {},
         tsserver = {},
-        pylsp = {},
-        html = {},
+        pyright = {},
+        html = {
+          filetypes = { "html", "htmldjango" },
+        },
         yamlls = {
           settings = {
             yaml = {

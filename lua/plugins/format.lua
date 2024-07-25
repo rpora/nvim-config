@@ -27,6 +27,7 @@ return {
             return { "isort", "black" }
           end
         end,
+        htmldjango = { "djlint" },
         lua = { "stylua" },
         javascript = { "prettier" },
         typescript = { "prettier" },
