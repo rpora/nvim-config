@@ -1,5 +1,8 @@
 vim.filetype.add({
-  pattern = {
-    [".*templates/.*.html"] = "htmldjango",
+  extension = {
+    ["http"] = "http",
   },
+  -- pattern = {
+  --   [".*templates/.*.html"] = "htmldjango",
+  -- },
 })

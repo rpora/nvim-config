@@ -1,5 +1,12 @@
 return {
   {
+    "hedyhli/outline.nvim",
+    config = function()
+      -- Example mapping to toggle outline
+      require("outline").setup({})
+    end,
+  },
+  {
     "neovim/nvim-lspconfig",
     dependencies = {
       "williamboman/mason.nvim",
@@ -13,23 +20,22 @@ return {
       vim.api.nvim_create_autocmd("LspAttach", {
         group = vim.api.nvim_create_augroup("kickstart-lsp-attach", { clear = true }),
         callback = function(event)
-          local map = function(keys, func)
-            vim.keymap.set("n", keys, func, { buffer = event.buf })
+          local map = function(keys, func, desc)
+            vim.keymap.set("n", keys, func, { buffer = event.buf, desc = desc })
           end
 
           local builtin = require("telescope.builtin")
 
-          map("gd", builtin.lsp_definitions)
-          map("gr", builtin.lsp_references)
-          map("gI", builtin.lsp_implementations)
-          map("gD", builtin.lsp_definitions)
+          map("gd", builtin.lsp_definitions, "To definition")
+          map("gr", builtin.lsp_references, "Show references")
+          map("gI", builtin.lsp_implementations, "Show implementations")
 
-          map("<leader>rn", vim.lsp.buf.rename)
-          map("<leader>ca", vim.lsp.buf.code_action)
-          map("<leader>D", builtin.lsp_type_definitions)
-          map("<leader>ds", builtin.lsp_document_symbols)
-          map("<leader>ws", builtin.lsp_dynamic_workspace_symbols)
-          map("K", vim.lsp.buf.hover)
+          map("<leader>rn", vim.lsp.buf.rename, "Rename")
+          map("<leader>ca", vim.lsp.buf.code_action, "Code actions")
+          map("<leader>D", builtin.lsp_type_definitions, "Type definition")
+          map("<leader>ds", builtin.lsp_document_symbols, "Document symbols")
+          map("<leader>ws", builtin.lsp_dynamic_workspace_symbols, "Workspace symbols")
+          map("K", vim.lsp.buf.hover, "Quick definition")
 
           -- highlight term after timeout
           local client = vim.lsp.get_client_by_id(event.data.client_id)
@@ -48,8 +54,8 @@ return {
       })
 
       local servers = {
-        gopls = {},
-        rust_analyzer = {},
+        -- gopls = {},
+        -- rust_analyzer = {},
         tsserver = {},
         pyright = {},
         html = {
@@ -76,6 +82,15 @@ return {
             Lua = {
               completion = {
                 callSnippet = "Replace",
+              },
+            },
+          },
+        },
+        cssls = {
+          settings = {
+            css = {
+              lint = {
+                unknownAtRules = "ignore",
               },
             },
           },

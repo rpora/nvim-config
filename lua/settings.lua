@@ -11,6 +11,9 @@ vim.opt.softtabstop = 2
 vim.opt.shiftwidth = 2
 vim.opt.expandtab = true
 
+-- markdown
+vim.opt.conceallevel = 2
+
 -- save history
 vim.o.undofile = true
 
@@ -59,4 +62,3 @@ vim.api.nvim_create_autocmd("TextYankPost", {
   group = highlight_group,
   pattern = "*",
 })
-

@@ -1,7 +1,7 @@
 return {
   {
     "stevearc/conform.nvim",
-    lazy = false,
+    event = { "BufReadPre", "BufNewFile" },
     keys = {
       {
         "<leader>f",
@@ -9,7 +9,7 @@ return {
           require("conform").format({ async = true, lsp_fallback = true })
         end,
         mode = "",
-        desc = "[F]ormat buffer",
+        desc = "Format buffer",
       },
     },
     opts = {
@@ -31,6 +31,11 @@ return {
         lua = { "stylua" },
         javascript = { "prettier" },
         typescript = { "prettier" },
+        javascriptreact = { "prettier" },
+        typescriptreact = { "prettier" },
+        css = { "prettier" },
+        html = { "prettier" },
+        markdown = { "prettier" },
       },
     },
   },
