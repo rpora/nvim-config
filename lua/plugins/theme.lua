@@ -1,5 +1,24 @@
 return {
   {
+    "rebelot/kanagawa.nvim",
+    name = "kanagawa",
+    init = function()
+      require("kanagawa").setup({
+        commentStyle = { italic = true },
+        colors = {
+          theme = {
+            all = {
+              ui = {
+                bg_gutter = "none",
+              },
+            },
+          },
+        },
+      })
+      vim.cmd("colorscheme kanagawa")
+    end,
+  },
+  {
     "rose-pine/neovim",
     name = "rose-pine",
     init = function()
@@ -9,7 +28,6 @@ return {
           italic = false,
         },
       })
-      vim.cmd("colorscheme rose-pine")
     end,
   },
   {

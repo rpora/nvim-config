@@ -1,5 +1,11 @@
 return {
   {
+    "supermaven-inc/supermaven-nvim",
+    config = function()
+      require("supermaven-nvim").setup({})
+    end,
+  },
+  {
     "David-Kunz/gen.nvim",
     opts = {
       model = "llama3.1", -- The default model to use.
