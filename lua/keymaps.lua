@@ -2,7 +2,7 @@
 
 -- Diagnostic keymaps
 vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Prev diagnostic" })
-vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
+vim.keymap.set("n", "<F2>", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
 vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, { desc = "Diagnostics Popup" })
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Diagnostics List" })
 
@@ -59,13 +59,6 @@ vim.keymap.set("n", "<leader>cc", ":Gen Chat<CR>", { desc = "Chat AI" })
 vim.keymap.set("n", "<leader>rl", function()
   vim.o.relativenumber = not vim.o.relativenumber
 end, { desc = "Toggle relative lines numbers" })
-
--- Obsidian
-vim.keymap.set("n", "<leader>os", ":ObsidianQuickSwitch<CR>", { desc = "Obsidian Quick Switch" })
-vim.keymap.set("n", "<leader>ob", ":ObsidianBacklinks<CR>", { desc = "Obsidian Backlinks" })
-vim.keymap.set("n", "<leader>of", ":ObsidianSearch<CR>", { desc = "Obsidian Search" })
-vim.keymap.set("n", "<leader>od", ":ObsidianDailies<CR>", { desc = "Obsidian Dailies" })
-vim.keymap.set("n", "<leader>ot", ":ObsidianToday<CR>", { desc = "Obsidian Today" })
 
 -- Outline
 vim.keymap.set("n", "<leader>ou", "<cmd>Outline<CR>", { desc = "Code Outline" })

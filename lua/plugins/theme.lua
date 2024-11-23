@@ -1,5 +1,29 @@
 return {
   {
+    "catppuccin/nvim",
+    name = "catppuccin",
+    priority = 1000,
+    init = function()
+      -- vim.cmd("colorscheme catpucccin")
+    end,
+  },
+  {
+    "folke/tokyonight.nvim",
+    lazy = false,
+    priority = 1000,
+    opts = {
+      transparent = true,
+      styles = {
+        sidebars = "transparent",
+        floats = "transparent",
+      },
+    },
+    init = function()
+      vim.cmd("colorscheme tokyonight-storm")
+    end,
+  },
+  {
+
     "rebelot/kanagawa.nvim",
     name = "kanagawa",
     init = function()
@@ -15,7 +39,7 @@ return {
           },
         },
       })
-      vim.cmd("colorscheme kanagawa")
+      -- vim.cmd("colorscheme kanagawa")
     end,
   },
   {

@@ -54,9 +54,7 @@ return {
       })
 
       local servers = {
-        -- gopls = {},
-        -- rust_analyzer = {},
-        tsserver = {},
+        ts_ls = {},
         pyright = {},
         html = {
           filetypes = { "html", "htmldjango" },
