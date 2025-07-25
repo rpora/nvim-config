@@ -1,5 +1,8 @@
 vim.o.clipboard = "unnamedplus"
 
+-- theme
+vim.cmd("colorscheme rose-pine")
+
 -- lines numbers
 vim.o.number = true
 vim.o.relativenumber = true
@@ -58,4 +61,9 @@ vim.api.nvim_create_autocmd("TextYankPost", {
   end,
   group = highlight_group,
   pattern = "*",
+})
+
+-- Diagnostics
+vim.diagnostic.config({
+  virtual_text = true,
 })
