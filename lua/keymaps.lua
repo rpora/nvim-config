@@ -30,16 +30,12 @@ vim.keymap.set("n", "<C-M-Up>", ":resize +5<CR>")
 vim.keymap.set("n", "<C-M-Down>", ":resize -5<CR>")
 
 -- Diagnostic keymaps
-vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Prev diagnostic" })
+vim.keymap.set("n", "<F1>", vim.diagnostic.goto_prev, { desc = "Prev diagnostic" })
 vim.keymap.set("n", "<F2>", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
-vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, { desc = "Diagnostics Popup" })
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Diagnostics List" })
 
 -- Undo tree
 vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle, { desc = "Undotree" })
 
 -- Peack definition
-vim.keymap.set("n", "gp", ":TSTextobjectPeekDefinitionCode @function.outer<CR>", { desc = "Peek Definition" })
-
--- Outline
-vim.keymap.set("n", "<leader>ou", "<cmd>Outline<CR>", { desc = "Code Outline" })
+vim.keymap.set("n", "<leader>gd", ":TSTextobjectPeekDefinitionCode @function.outer<CR>", { desc = "Peek Definition" })

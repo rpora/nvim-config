@@ -1,7 +1,7 @@
 return {
   {
     "nvim-telescope/telescope.nvim",
-    branch = "0.1.x",
+    tag = "0.1.8",
     dependencies = {
       "nvim-lua/plenary.nvim",
       {
@@ -51,14 +51,6 @@ return {
       vim.keymap.set("n", "<leader>sd", builtin.diagnostics, { desc = "Diagnostics" })
       vim.keymap.set("n", "<leader>sr", builtin.resume, { desc = "Resume last" })
       vim.keymap.set("n", "<leader>s.", builtin.oldfiles, { desc = "Recent files" })
-
-      -- Fuzzy search in the current buffer
-      vim.keymap.set("n", "<leader>/", function()
-        builtin.current_buffer_fuzzy_find(require("telescope.themes").get_dropdown({
-          winblend = 10,
-          previewer = false,
-        }))
-      end, { desc = "Fuzzy search" })
 
       -- Shortcut for searching your Neovim configuration files
       vim.keymap.set("n", "<leader>sn", function()
