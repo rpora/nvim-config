@@ -26,15 +26,6 @@ vim.o.incsearch = true
 vim.o.ignorecase = true
 vim.o.smartcase = true
 
--- Preview substitutions
-vim.opt.inccommand = "split"
-
--- signcolumn on
-vim.wo.signcolumn = "yes"
-
--- update time
-vim.o.updatetime = 250
-
 vim.o.termguicolors = true
 
 -- Default splits
@@ -46,7 +37,6 @@ vim.o.cursorline = true
 
 -- lines to keep above and below the cursor
 vim.opt.scrolloff = 10
-
 vim.opt.hidden = true
 
 -- Remove auto comment on new line below a comment
@@ -68,13 +58,3 @@ vim.diagnostic.config({
   virtual_text = true,
 })
 
--- Borders
-local _border = "rounded"
-
-vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
-  border = _border,
-})
-
-vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
-  border = _border,
-})
