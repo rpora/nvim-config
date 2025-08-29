@@ -18,3 +18,10 @@ vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Diagnostic
 
 -- Undo tree
 vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle, { desc = "Undotree" })
+
+-- Hunks
+vim.keymap.set("n", "<leader>hs", ":Gitsigns preview_hunk<CR>", { desc = "Preview hunk" })
+vim.keymap.set("n", "<leader>hz", ":Gitsigns reset_hunk<CR>", { desc = "Reset hunk" })
+vim.keymap.set("n", "<leader>hq", ":Gitsigns setqflist<CR>", { desc = "Hunks List" })
+vim.keymap.set("n", "[h", ":Gitsigns nav_hunk prev<CR>", { desc = "Prev hunk" })
+vim.keymap.set("n", "]h", ":Gitsigns nav_hunk next<CR>", { desc = "Next hunk" })
