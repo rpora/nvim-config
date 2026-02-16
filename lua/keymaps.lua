@@ -1,7 +1,7 @@
 -- [[ Keymaps ]]
 
 -- Files explorer
-vim.keymap.set("n", "<leader>e", ":Ex<CR>", { desc = "Explorer" })
+vim.keymap.set("n", "<leader>e", ":Oil<CR>", { desc = "Explorer" })
 
 -- Scroll at center of the screen
 vim.keymap.set("n", "<C-d>", "<C-d>zz")

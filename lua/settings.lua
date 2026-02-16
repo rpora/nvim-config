@@ -1,7 +1,7 @@
 vim.o.clipboard = "unnamedplus"
 
 -- theme
-vim.cmd("colorscheme rose-pine")
+vim.cmd("colorscheme jellybeans")
 
 -- lines numbers
 vim.o.number = true
