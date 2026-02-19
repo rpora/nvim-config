@@ -18,6 +18,9 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup("plugins")
 require("keymaps")
 require("settings")
+require("custom.copy-path")
+require("custom.scratch")
+require("custom.workflow")
 
 -- vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
 --   pattern = "%/templates/**/*.html", -- Adjust the path as needed

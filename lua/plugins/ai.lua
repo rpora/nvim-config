@@ -1,3 +1,34 @@
 return {
-  "github/copilot.vim"
+  -- {
+  --   "github/copilot.vim",
+  --   enabled = true,
+  -- },
+  -- {
+  --   "olimorris/codecompanion.nvim",
+  --   opts = {},
+  --   config = function()
+  --     require("codecompanion").setup({
+  --       interactions = {
+  --         chat = {
+  --           adapter = "codex",
+  --         },
+  --       },
+  --       adapters = {
+  --         acp = {
+  --           codex = function()
+  --             return require("codecompanion.adapters").extend("codex", {
+  --               defaults = {
+  --                 auth_method = "chatgpt", -- "openai-api-key"|"codex-api-key"|"chatgpt"
+  --               },
+  --             })
+  --           end,
+  --         },
+  --       },
+  --     })
+  --   end,
+  --   dependencies = {
+  --     "nvim-lua/plenary.nvim",
+  --     "nvim-treesitter/nvim-treesitter",
+  --   },
+  -- },
 }

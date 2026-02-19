@@ -47,6 +47,10 @@ vim.cmd("autocmd BufEnter * setlocal formatoptions-=cro")
 vim.opt.grepprg = "rg --vimgrep"
 vim.opt.grepformat = "%f:%l:%c:%m"
 
+-- Allow local configuration
+vim.opt.exrc = true
+vim.opt.secure = true
+
 -- Highlight on yank
 local highlight_group = vim.api.nvim_create_augroup("YankHighlight", { clear = true })
 vim.api.nvim_create_autocmd("TextYankPost", {
@@ -59,6 +63,13 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 
 -- Diagnostics
 vim.diagnostic.config({
+  update_in_insert = false,
+  severity_sort = true,
+  float = {
+    border = "rounded",
+    source = "if_many",
+  },
   virtual_text = true,
+  jump = { float = true }
 })
 

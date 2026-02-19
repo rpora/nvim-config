@@ -1,0 +1,25 @@
+WRN 2026-02-19T11:24:23.989 ?.27011    server_start:191: Failed to start server: operation not permitted: /run/user/1000//nvim.27011.0
+INF 2026-02-19T11:24:23.989 ?.27011    set_init_2:604: startup runtimepath/packpath value: /home/rpora/.config/nvim,/etc/xdg/nvim,/home/rpora/.local/share/nvim/site,/usr/local/share/nvim/site,/usr/share/nvim/site,/usr/local/share/nvim/runtime,/usr/local/lib/nvim,/usr/share/nvim/site/after,/usr/local/share/nvim/site/after,/home/rpora/.local/share/nvim/site/after,/etc/xdg/nvim/after,/home/rpora/.config/nvim/after
+DBG 2026-02-19T11:24:23.998 ?.27011    emsg_multiline:819: (:silent) E716: Key not present in Dictionary: "expanded" (/home/rpora/.local/share/nvim/lazy/vim-dadbod-ui/plugin/db_ui.vim (line 49))
+DBG 2026-02-19T11:24:23.998 ?.27011    emsg_multiline:819: (:silent) E716: Key not present in Dictionary: "collapsed" (/home/rpora/.local/share/nvim/lazy/vim-dadbod-ui/plugin/db_ui.vim (line 56))
+DBG 2026-02-19T11:24:23.998 ?.27011    emsg_multiline:819: (:silent) E716: Key not present in Dictionary: "expanded" (/home/rpora/.local/share/nvim/lazy/vim-dadbod-ui/plugin/db_ui.vim (line 119))
+DBG 2026-02-19T11:24:23.998 ?.27011    emsg_multiline:819: (:silent) E716: Key not present in Dictionary: "collapsed" (/home/rpora/.local/share/nvim/lazy/vim-dadbod-ui/plugin/db_ui.vim (line 120))
+INF 2026-02-19T11:24:24.051 ?.27011    emsg_multiline:832: E5113: Lua chunk: vim/loader.lua:0: EACCES: permission denied: /home/rpora/.cache/nvim/luac/%2fhome%2frpora%2f.config%2fnvim%2flua%2fcustom%2fworkflow.luac
+stack traceback:
+	[C]: in function 'assert'
+	vim/loader.lua: in function ''
+	vim/loader.lua: in function 'loadfile'
+	vim/loader.lua: in function <vim/loader.lua:0>
+	[C]: in function 'require'
+	/home/rpora/.config/nvim/init.lua:23: in main chunk
+INF 2026-02-19T11:24:24.055 ?.27011    emsg_multiline:832: E5108: Lua: vim/loader.lua:0: EACCES: permission denied: /home/rpora/.cache/nvim/luac/%2fhome%2frpora%2f.config%2fnvim%2flua%2fcustom%2fworkflow.luac
+stack traceback:
+	[C]: in function 'assert'
+	vim/loader.lua: in function ''
+	vim/loader.lua: in function 'loadfile'
+	vim/loader.lua: in function <vim/loader.lua:0>
+	[C]: in function 'require'
+	[string ":lua"]:1: in main chunk
+INF 2026-02-19T11:24:24.056 ?.27011    emsg_multiline:832: Failed to open LSP client log file: /home/rpora/.local/state/nvim/lsp.log: Permission denied
+INF 2026-02-19T11:24:24.056 ?.27011    emsg_multiline:832: E886: System error while opening temporary ShaDa file /home/rpora/.local/state/nvim/shada/main.shada.tmp.a for writing: permission denied
+INF 2026-02-19T11:24:24.057 ?.27011    os_exit:688: Nvim exit: 0
