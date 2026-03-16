@@ -70,6 +70,5 @@ vim.diagnostic.config({
     source = "if_many",
   },
   virtual_text = true,
-  jump = { float = true }
+  jump = { float = true },
 })
-

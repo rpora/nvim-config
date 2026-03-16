@@ -2,6 +2,7 @@ return {
   -- Undo tree
   "mbbill/undotree",
 
+  -- Explorer
   {
     "stevearc/oil.nvim",
     config = function()
@@ -18,6 +19,19 @@ return {
     end,
     dependencies = { { "nvim-tree/nvim-web-devicons", opts = {} } },
     lazy = false,
+  },
+
+  -- Markdown
+  {
+    "MeanderingProgrammer/render-markdown.nvim",
+    config = function()
+      require("render-markdown").setup({
+        heading = {
+          enabled = true,
+          backgrounds = {},
+        },
+      })
+    end,
   },
 
   -- Comments
