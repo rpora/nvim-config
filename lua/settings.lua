@@ -72,3 +72,24 @@ vim.diagnostic.config({
   virtual_text = true,
   jump = { float = true },
 })
+
+local function transparent_telescope()
+  local clear_bg = {
+    "TelescopeNormal",
+    "TelescopeBorder",
+    "TelescopePromptNormal",
+    "TelescopePromptBorder",
+    "TelescopePreviewNormal",
+    "TelescopePreviewBorder",
+    "TelescopeResultsNormal",
+    "TelescopeResultsBorder",
+  }
+
+  for _, group in ipairs(clear_bg) do
+    local hl = vim.api.nvim_get_hl(0, { name = group })
+    hl.bg = nil
+    vim.api.nvim_set_hl(0, group, hl)
+  end
+end
+
+transparent_telescope()

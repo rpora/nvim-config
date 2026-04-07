@@ -20,7 +20,7 @@ vim.keymap.set("n", "<ESC>", ":nohlsearch<Bar>:echo<CR>")
 -- Diagnostic keymaps
 vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Prev diagnostic" })
 vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
-vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Diagnostics List" })
+vim.keymap.set("n", "<leader>d", vim.diagnostic.setloclist, { desc = "Diagnostics List" })
 
 -- Undo tree
 vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle, { desc = "Undotree" })

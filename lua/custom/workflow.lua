@@ -23,19 +23,6 @@ local function parse_location(raw)
   return nil, nil, nil
 end
 
----Populate the quickfix list with all entries from `git jump --stdout diff`.
----Opens the quickfix window when entries are available.
-function M.diff_to_quickfix()
-  vim.cmd([[cexpr system('git jump --stdout diff')]])
-
-  if vim.fn.getqflist({ size = 0 }).size == 0 then
-    vim.notify("Quickfix vide (diff vide ou commande indisponible).", vim.log.levels.INFO)
-    return
-  end
-
-  vim.cmd("copen")
-end
-
 ---Remove the current quickfix entry, like marking a todo item as done.
 ---Keeps focus on the next valid entry, or closes quickfix when empty.
 function M.quickfix_done()
@@ -95,23 +82,6 @@ function M.quickfix_add(opts)
   vim.cmd("copen")
 end
 
-vim.api.nvim_create_user_command("Cdiff", M.diff_to_quickfix, {
-  desc = "Populate quickfix list from full git diff",
-  force = true,
-})
-
-vim.api.nvim_create_user_command("Cdone", M.quickfix_done, {
-  desc = "Remove current quickfix entry",
-  force = true,
-})
-
-vim.api.nvim_create_user_command("Cadd", M.quickfix_add, {
-  desc = "Add entry to quickfix list",
-  nargs = "*",
-  complete = "file",
-  force = true,
-})
-
 ---Run `pnpm tsc --pretty false` and populate quickfix with TypeScript errors.
 ---Expected format: `file(line,col): error TSxxxx: message`
 function M.typescript_to_quickfix()
@@ -141,6 +111,20 @@ function M.typescript_to_quickfix()
     vim.cmd("copen")
   end
 end
+
+--- Commands
+
+vim.api.nvim_create_user_command("Cdone", M.quickfix_done, {
+  desc = "Remove current quickfix entry",
+  force = true,
+})
+
+vim.api.nvim_create_user_command("Cadd", M.quickfix_add, {
+  desc = "Add entry to quickfix list",
+  nargs = "*",
+  complete = "file",
+  force = true,
+})
 
 vim.api.nvim_create_user_command("Cts", M.typescript_to_quickfix, {
   desc = "Populate quickfix list from TypeScript diagnostics",

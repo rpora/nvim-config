@@ -21,19 +21,6 @@ return {
     lazy = false,
   },
 
-  -- Markdown
-  {
-    "MeanderingProgrammer/render-markdown.nvim",
-    config = function()
-      require("render-markdown").setup({
-        heading = {
-          enabled = true,
-          backgrounds = {},
-        },
-      })
-    end,
-  },
-
   -- Comments
   { "numToStr/Comment.nvim", opts = {} },
 

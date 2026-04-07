@@ -112,11 +112,11 @@ function M.copy_range_with_text()
   set_clipboard(out)
 end
 
-vim.keymap.set("n", "<leader>rp", M.copy_path, { desc = "Copy relative path (project root)" })
-vim.keymap.set("n", "<leader>rl", M.copy_path_line, { desc = "Copy path:line" })
-vim.keymap.set("n", "<leader>rs", M.copy_path_line_symbol, { desc = "Copy path:line:symbol" })
-vim.keymap.set("v", "<leader>rr", M.copy_range, { desc = "Copy path:{start-end}" })
-vim.keymap.set("v", "<leader>rR", M.copy_range_with_text, { desc = "Copy path:{start-end} + text" })
+vim.keymap.set("n", "<leader>cp", M.copy_path, { desc = "Copy relative path (project root)" })
+vim.keymap.set("n", "<leader>cl", M.copy_path_line, { desc = "Copy path:line" })
+vim.keymap.set("n", "<leader>cs", M.copy_path_line_symbol, { desc = "Copy path:line:symbol" })
+vim.keymap.set("v", "<leader>cr", M.copy_range, { desc = "Copy path:{start-end}" })
+vim.keymap.set("v", "<leader>cR", M.copy_range_with_text, { desc = "Copy path:{start-end} + text" })
 
 -- Expose comme commande
 vim.api.nvim_create_user_command("CopyRelPath", M.copy_path, {})
