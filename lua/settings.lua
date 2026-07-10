@@ -1,7 +1,7 @@
 vim.o.clipboard = "unnamedplus"
 
 -- theme
-vim.cmd("colorscheme jellybeans")
+vim.cmd("colorscheme rose-pine")
 
 -- lines numbers
 vim.o.number = true
@@ -34,6 +34,9 @@ vim.o.splitbelow = true
 
 -- Show which line your cursor is on
 vim.o.cursorline = true
+
+-- Lisibility
+vim.opt.cursorlineopt = "number,line"
 
 -- lines to keep above and below the cursor
 vim.opt.scrolloff = 10
@@ -70,26 +73,5 @@ vim.diagnostic.config({
     source = "if_many",
   },
   virtual_text = true,
-  jump = { float = true },
+  jump = { on_jump = true },
 })
-
-local function transparent_telescope()
-  local clear_bg = {
-    "TelescopeNormal",
-    "TelescopeBorder",
-    "TelescopePromptNormal",
-    "TelescopePromptBorder",
-    "TelescopePreviewNormal",
-    "TelescopePreviewBorder",
-    "TelescopeResultsNormal",
-    "TelescopeResultsBorder",
-  }
-
-  for _, group in ipairs(clear_bg) do
-    local hl = vim.api.nvim_get_hl(0, { name = group })
-    hl.bg = nil
-    vim.api.nvim_set_hl(0, group, hl)
-  end
-end
-
-transparent_telescope()
