@@ -26,11 +26,20 @@ vim.keymap.set("n", "<leader>d", vim.diagnostic.setloclist, { desc = "Diagnostic
 vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle, { desc = "Undotree" })
 
 -- Hunks
-vim.keymap.set("n", "<leader>hp", ":Gitsigns preview_hunk<CR>", { desc = "Preview hunk" })
-vim.keymap.set("n", "<leader>hz", ":Gitsigns reset_hunk<CR>", { desc = "Reset hunk" })
-vim.keymap.set("n", "<leader>hq", ":Gitsigns setqflist<CR>", { desc = "Hunks List" })
-vim.keymap.set("n", "[h", ":Gitsigns nav_hunk prev<CR>", { desc = "Prev hunk" })
-vim.keymap.set("n", "]h", ":Gitsigns nav_hunk next<CR>", { desc = "Next hunk" })
+vim.keymap.set("n", "<leader>cv", ":Gitsigns preview_hunk<CR>", { desc = "Preview hunk" })
+vim.keymap.set("n", "<leader>cz", ":Gitsigns reset_hunk<CR>", { desc = "Reset hunk" })
+vim.keymap.set("n", "[h", function()
+  require("custom.git").nav_hunk("prev")
+end, { desc = "Prev hunk" })
+vim.keymap.set("n", "]h", function()
+  require("custom.git").nav_hunk("next")
+end, { desc = "Next hunk" })
+
+-- Git
+vim.keymap.set("n", "<leader>cf", "<cmd>Gedit :<cr>", { desc = "Git status dans la fenêtre courante" })
+vim.keymap.set("n", "<leader>cc", "<cmd>GitHunks<cr>", { desc = "Changements Git dans la quickfix" })
+vim.keymap.set("n", "<leader>cd", "<cmd>Gdiffsplit<cr>", { desc = "Diff du fichier courant" })
+vim.keymap.set("n", "<leader>cu", "<cmd>Git diff HEAD -- %<cr>", { desc = "Diff unifié du fichier courant" })
 
 -- Navigating beetween Windows and panes
 vim.keymap.set("n", "<C-Left>", "<c-w>h")
