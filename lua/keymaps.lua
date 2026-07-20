@@ -1,8 +1,5 @@
 -- [[ Keymaps ]]
 
--- Save
-vim.keymap.set("n", "<leader>w", ":w<CR>", { desc = "Save" })
-
 -- Files explorer
 vim.keymap.set("n", "<leader>e", ":Oil<CR>", { desc = "Explorer" })
 
@@ -17,10 +14,9 @@ vim.keymap.set("n", "N", "Nzz")
 -- Cancel search highlight
 vim.keymap.set("n", "<ESC>", ":nohlsearch<Bar>:echo<CR>")
 
--- Diagnostic keymaps
-vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Prev diagnostic" })
-vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
-vim.keymap.set("n", "<leader>d", vim.diagnostic.setloclist, { desc = "Diagnostics List" })
+-- Diagnostic
+vim.keymap.set("n", "<leader>dc", vim.diagnostic.setloclist, { desc = "Diagnostics List" })
+vim.keymap.set("n", "<leader>dv", vim.diagnostic.open_float, { desc = "Diagnostics Float" })
 
 -- Undo tree
 vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle, { desc = "Undotree" })
@@ -52,6 +48,3 @@ vim.keymap.set("n", "<C-M-Left>", ":vertical resize -5<CR>")
 vim.keymap.set("n", "<C-M-Right>", ":vertical resize +5<CR>")
 vim.keymap.set("n", "<C-M-Up>", ":resize +5<CR>")
 vim.keymap.set("n", "<C-M-Down>", ":resize -5<CR>")
-
--- Peack definition
-vim.keymap.set("n", "<leader>gd", ":TSTextobjectPeekDefinitionCode @function.outer<CR>", { desc = "Peek Definition" })

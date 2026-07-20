@@ -1,5 +1,13 @@
 return {
   {
+    "vague-theme/vague.nvim",
+    init = function()
+      require("vague").setup({
+        transparent = true,
+      })
+    end,
+  },
+  {
     "rose-pine/neovim",
     name = "rose-pine",
     init = function()

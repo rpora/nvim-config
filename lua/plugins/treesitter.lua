@@ -1,78 +1,41 @@
+local parsers = {
+  "bash",
+  "c",
+  "cpp",
+  "go",
+  "html",
+  "http",
+  "javascript",
+  "lua",
+  "markdown",
+  "markdown_inline",
+  "python",
+  "rust",
+  "tsx",
+  "typescript",
+  "vim",
+  "vimdoc",
+}
+
 return {
   {
     "nvim-treesitter/nvim-treesitter",
-    build = ":TSUpdate",
-    dependencies = {
-      "nvim-treesitter/nvim-treesitter-textobjects",
-    },
-    config = function(_, opts)
-      require("nvim-treesitter.configs").setup(opts)
+    branch = "main",
+    lazy = false,
+    build = function()
+      require("nvim-treesitter").install(parsers):wait(300000)
     end,
-    opts = {
-      ensure_installed = {
-        "c",
-        "cpp",
-        "go",
-        "lua",
-        "python",
-        "rust",
-        "tsx",
-        "javascript",
-        "typescript",
-        "vimdoc",
-        "vim",
-        "bash",
-        "html",
-        "http",
-        "markdown",
-        "markdown_inline",
-      },
-      auto_install = true,
-      highlight = { enable = true },
-      indent = { enable = true },
-      incremental_selection = {
-        enable = true,
-        keymaps = {
-          init_selection = "<M-e>",
-          node_incremental = "<M-e>",
-          node_decremental = "<M-n>",
-        },
-      },
-      textobjects = {
-        select = {
-          enable = true,
-          lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
-          keymaps = {
-            -- You can use the capture groups defined in textobjects.scm
-            ["aa"] = "@parameter.outer",
-            ["ia"] = "@parameter.inner",
-            ["af"] = "@function.outer",
-            ["if"] = "@function.inner",
-            ["ac"] = "@class.outer",
-            ["ic"] = "@class.inner",
-          },
-        },
-        move = {
-          enable = true,
-          set_jumps = true, -- whether to set jumps in the jumplist
-          goto_next_start = {
-            ["]m"] = "@function.outer",
-            ["]]"] = "@class.outer",
-          },
-          goto_next_end = {
-            ["]M"] = "@function.outer",
-            ["]["] = "@class.outer",
-          },
-          goto_previous_start = {
-            ["[m"] = "@function.outer",
-            ["[["] = "@class.outer",
-          },
-          goto_previous_end = {
-            ["[M"] = "@function.outer",
-            ["[]"] = "@class.outer",
-          },
-        },
-      },
-    },
+    config = function()
+      local group = vim.api.nvim_create_augroup("treesitter", { clear = true })
+
+      vim.api.nvim_create_autocmd("FileType", {
+        group = group,
+        callback = function(args)
+          if pcall(vim.treesitter.start, args.buf) then
+            vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+          end
+        end,
+      })
+    end,
   },
 }

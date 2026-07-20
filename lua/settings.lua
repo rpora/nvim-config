@@ -1,7 +1,8 @@
-vim.o.clipboard = "unnamedplus"
-
 -- theme
-vim.cmd("colorscheme rose-pine")
+vim.cmd("colorscheme vague")
+vim.opt.termguicolors = true
+vim.opt.signcolumn = "yes"
+vim.opt.colorcolumn = "100"
 
 -- lines numbers
 vim.o.number = true
@@ -13,20 +14,21 @@ vim.opt.tabstop = 2
 vim.opt.softtabstop = 2
 vim.opt.shiftwidth = 2
 vim.opt.expandtab = true
+vim.opt.list = true
+vim.opt.listchars = {
+  tab = "│ ",
+  leadmultispace = "│ ",
+}
 
--- save history
+-- history
 vim.o.undofile = true
-
--- disable swap files, as we auto-save when quitting insert mode
 vim.o.swapfile = false
 
 -- search
-vim.o.hlsearch = true
-vim.o.incsearch = true
 vim.o.ignorecase = true
 vim.o.smartcase = true
-
-vim.o.termguicolors = true
+vim.opt.grepprg = "rg --vimgrep"
+vim.opt.grepformat = "%f:%l:%c:%m"
 
 -- Default splits
 vim.o.splitright = true
@@ -37,41 +39,31 @@ vim.o.cursorline = true
 
 -- Lisibility
 vim.opt.cursorlineopt = "number,line"
-
--- lines to keep above and below the cursor
 vim.opt.scrolloff = 10
-vim.opt.hidden = true
 
--- Remove auto comment on new line below a comment
-vim.cmd("autocmd BufEnter * set formatoptions-=cro")
-vim.cmd("autocmd BufEnter * setlocal formatoptions-=cro")
+-- Misc
+vim.o.clipboard = "unnamedplus"
+vim.opt.spelllang = { "en", "fr" }
 
--- Ripgrep
-vim.opt.grepprg = "rg --vimgrep"
-vim.opt.grepformat = "%f:%l:%c:%m"
+-- Diffs
+vim.opt.diffopt:append("vertical")
+vim.opt.diffopt:append("algorithm:patience")
+vim.opt.diffopt:append("linematch:60")
 
 -- Allow local configuration
 vim.opt.exrc = true
 vim.opt.secure = true
-
--- Highlight on yank
-local highlight_group = vim.api.nvim_create_augroup("YankHighlight", { clear = true })
-vim.api.nvim_create_autocmd("TextYankPost", {
-  callback = function()
-    vim.highlight.on_yank()
-  end,
-  group = highlight_group,
-  pattern = "*",
-})
 
 -- Diagnostics
 vim.diagnostic.config({
   update_in_insert = false,
   severity_sort = true,
   float = {
+    focusable = false,
+    style = "minimal",
     border = "rounded",
-    source = "if_many",
+    source = true,
   },
-  virtual_text = true,
+  virtual_text = false,
   jump = { on_jump = true },
 })

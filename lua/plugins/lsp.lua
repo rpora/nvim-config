@@ -2,6 +2,7 @@ return {
   {
     "neovim/nvim-lspconfig",
     dependencies = {
+      "saghen/blink.cmp",
       "williamboman/mason.nvim",
       "williamboman/mason-lspconfig.nvim",
       "WhoIsSethDaniel/mason-tool-installer.nvim",
@@ -13,20 +14,7 @@ return {
           local map = function(keys, func, desc)
             vim.keymap.set("n", keys, func, { buffer = event.buf, desc = desc })
           end
-
-          local builtin = require("telescope.builtin")
-
-          map("gd", builtin.lsp_definitions, "To definition")
-          map("gr", builtin.lsp_references, "Show references")
-          map("gI", builtin.lsp_implementations, "Show implementations")
-
-          map("<leader>rn", vim.lsp.buf.rename, "Rename")
-          map("<leader>ca", vim.lsp.buf.code_action, "Code actions")
-          map("<leader>D", builtin.lsp_type_definitions, "Type definition")
-          map("<leader>ds", builtin.lsp_document_symbols, "Document symbols")
-          map("<leader>ws", builtin.lsp_dynamic_workspace_symbols, "Workspace symbols")
           map("K", vim.lsp.buf.hover, "Quick definition")
-
         end,
       })
 
@@ -58,6 +46,9 @@ return {
               completion = {
                 callSnippet = "Replace",
               },
+              diagnostics = {
+                globals = { "vim" },
+              },
             },
           },
         },
@@ -73,7 +64,12 @@ return {
       }
 
       local capabilities = vim.lsp.protocol.make_client_capabilities()
-      capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
+      capabilities = require("blink.cmp").get_lsp_capabilities(capabilities)
+
+      for server_name, server_config in pairs(servers) do
+        server_config.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server_config.capabilities or {})
+        vim.lsp.config(server_name, server_config)
+      end
 
       -- Ensure the servers are installed
       require("mason").setup()
