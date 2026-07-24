@@ -88,6 +88,22 @@ return {
       end,
       desc = "FZF Config",
     },
+
+    -- LSP
+    {
+      "<leader>gr",
+      function()
+        require("fzf-lua").lsp_references()
+      end,
+      desc = "FZF LSP References",
+    },
+    {
+      "<leader>gw",
+      function()
+        require("fzf-lua").lsp_workspace_symbols()
+      end,
+      desc = "FZF LSP References",
+    },
   },
   opts = {},
 }

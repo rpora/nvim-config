@@ -13,6 +13,7 @@ local parsers = {
   "rust",
   "tsx",
   "typescript",
+  "yaml",
   "vim",
   "vimdoc",
 }
@@ -37,5 +38,13 @@ return {
         end,
       })
     end,
+  },
+  {
+    "nvim-treesitter/nvim-treesitter-context",
+    opts = {
+      multiline_threshold = 1,
+      max_lines = 5,
+      mode = "topline",
+    },
   },
 }

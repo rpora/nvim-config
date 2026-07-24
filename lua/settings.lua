@@ -1,5 +1,5 @@
 -- theme
-vim.cmd("colorscheme vague")
+vim.cmd("colorscheme rose-pine")
 vim.opt.termguicolors = true
 vim.opt.signcolumn = "yes"
 vim.opt.colorcolumn = "100"
@@ -40,6 +40,7 @@ vim.o.cursorline = true
 -- Lisibility
 vim.opt.cursorlineopt = "number,line"
 vim.opt.scrolloff = 10
+vim.opt.updatetime = 400
 
 -- Misc
 vim.o.clipboard = "unnamedplus"

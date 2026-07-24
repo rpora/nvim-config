@@ -28,3 +28,12 @@ vim.api.nvim_create_autocmd("BufReadPost", {
     end
   end,
 })
+
+-- Highlight the symbol under the cursor in the document
+vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+  callback = vim.lsp.buf.document_highlight,
+})
+
+vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
+  callback = vim.lsp.buf.clear_references,
+})

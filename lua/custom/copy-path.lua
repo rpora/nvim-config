@@ -1,122 +1,113 @@
--- lua/refcopy.lua
+local context = require("custom.agent_context")
+
 local M = {}
 
--- 1) Root du projet : git > lsp > cwd
-local function project_root(bufnr)
-  bufnr = bufnr or 0
-  local file = vim.api.nvim_buf_get_name(bufnr)
-  local dir = (file ~= "" and vim.fs.dirname(file)) or vim.loop.cwd()
-
-  -- git root
-  local git = vim.fs.find(".git", { path = dir, upward = true })[1]
-  if git then
-    return vim.fs.dirname(git)
+local function relative_path()
+  local path, path_error = context.get_relative_path(0)
+  if not path then
+    context.notify_error(path_error)
+    return nil
   end
 
-  -- lsp root
-  local clients = vim.lsp.get_clients({ bufnr = bufnr })
-  for _, c in ipairs(clients) do
-    if c.config and c.config.root_dir and c.config.root_dir ~= "" then
-      return c.config.root_dir
-    end
-    -- certains serveurs exposent workspace_folders
-    if c.workspace_folders and c.workspace_folders[1] and c.workspace_folders[1].name then
-      return c.workspace_folders[1].name
-    end
-  end
-
-  -- fallback
-  return vim.loop.cwd()
+  return path
 end
 
-local function relpath_from_root(bufnr)
-  bufnr = bufnr or 0
-  local file = vim.api.nvim_buf_get_name(bufnr)
-  if file == "" then
-    return "[No Name]"
-  end
-  local root = project_root(bufnr)
-  local rel = vim.fs.relpath(root, file)
-  return rel or file
-end
-
-local function set_clipboard(text)
-  vim.fn.setreg("+", text)
-  vim.fn.setreg('"', text) -- aussi dans le unnamed
-  vim.notify("Copied: " .. text, vim.log.levels.INFO)
-end
-
-local function selected_line_range()
-  local mode = vim.fn.mode()
-  if mode == "v" or mode == "V" or mode == "\22" then
-    local s = vim.fn.getpos("v")[2]
-    local e = vim.api.nvim_win_get_cursor(0)[1]
-    if s > e then
-      s, e = e, s
-    end
-    return s, e
+local function copy(text, label)
+  local ok, copy_error = context.copy_to_clipboard(text)
+  if not ok then
+    context.notify_error(copy_error)
+    return
   end
 
-  local s = vim.fn.getpos("'<")[2]
-  local e = vim.fn.getpos("'>")[2]
-  if s > e then
-    s, e = e, s
-  end
-  return s, e
+  context.notify_copy(label, text)
 end
 
 -- A) Copier chemin relatif à la racine
 function M.copy_path()
-  set_clipboard(relpath_from_root(0))
+  local path = relative_path()
+  if path then
+    copy(path, path)
+  end
 end
 
 -- B) Copier chemin + numéro de ligne (format file:line)
 function M.copy_path_line()
-  local p = relpath_from_root(0)
-  local l = vim.api.nvim_win_get_cursor(0)[1]
-  set_clipboard(string.format("%s:%d", p, l))
+  local path = relative_path()
+  if not path then
+    return
+  end
+
+  local line = vim.api.nvim_win_get_cursor(0)[1]
+  local reference = string.format("%s:%d", path, line)
+  copy(reference, reference)
 end
 
 -- C) Copier fichier:ligne:symbole (symbole = <cword>)
 function M.copy_path_line_symbol()
-  local p = relpath_from_root(0)
-  local l = vim.api.nvim_win_get_cursor(0)[1]
-  local sym = vim.fn.expand("<cword>")
-  set_clipboard(string.format("%s:%d:%s", p, l, sym))
+  local path = relative_path()
+  if not path then
+    return
+  end
+
+  local line = vim.api.nvim_win_get_cursor(0)[1]
+  local symbol = context.get_current_symbol(0)
+  local reference = string.format("%s:%d", path, line)
+  if symbol then
+    reference = reference .. ":" .. symbol
+  end
+
+  copy(reference, reference)
 end
 
 -- D) Copier fichier:{start-end} (+ optionnel: texte sélectionné)
 -- Format: file:{start-end}
 function M.copy_range()
-  local start_line, end_line = selected_line_range()
+  local path = relative_path()
+  if not path then
+    return
+  end
 
-  local p = relpath_from_root(0)
-  set_clipboard(string.format("%s:{%d-%d}", p, start_line, end_line))
+  local start_line, end_line = context.get_visual_range()
+  if not start_line then
+    context.notify_error(end_line)
+    return
+  end
+
+  local reference = string.format("%s:{%d-%d}", path, start_line, end_line)
+  copy(reference, reference)
 end
 
 -- E) Copier fichier:{start-end}\n```<ft>\n<texte>\n```
 -- Très pratique pour Codex si tu veux donner le contenu exact.
 function M.copy_range_with_text()
-  local p = relpath_from_root(0)
-  local ft = vim.bo.filetype
-  local s, e = selected_line_range()
-  if s == 0 or e == 0 then
-    local l = vim.api.nvim_win_get_cursor(0)[1]
-    s, e = l, l
+  local path = relative_path()
+  if not path then
+    return
   end
 
-  local lines = vim.api.nvim_buf_get_lines(0, s - 1, e, false)
-  local body = table.concat(lines, "\n")
+  local start_line, end_line = context.get_visual_range()
+  if not start_line then
+    context.notify_error(end_line)
+    return
+  end
 
-  local out = string.format("%s:{%d-%d}\n```%s\n%s\n```", p, s, e, ft, body)
-  set_clipboard(out)
+  local selection, selection_error = context.get_visual_selection()
+  if not selection then
+    context.notify_error(selection_error)
+    return
+  end
+
+  local opening_fence, closing_fence = context.get_markdown_fence(0)
+  local reference = string.format("%s:{%d-%d}", path, start_line, end_line)
+  local output = table.concat({
+    reference,
+    opening_fence,
+    selection,
+    closing_fence,
+  }, "\n")
+
+  copy(output, reference)
 end
-
-vim.keymap.set("n", "<leader>cp", M.copy_path, { desc = "Copy relative path (project root)" })
-vim.keymap.set("n", "<leader>cl", M.copy_path_line, { desc = "Copy path:line" })
-vim.keymap.set("n", "<leader>cs", M.copy_path_line_symbol, { desc = "Copy path:line:symbol" })
-vim.keymap.set("v", "<leader>cr", M.copy_range, { desc = "Copy path:{start-end}" })
-vim.keymap.set("v", "<leader>cR", M.copy_range_with_text, { desc = "Copy path:{start-end} + text" })
 
 -- Expose comme commande
 vim.api.nvim_create_user_command("CopyRelPath", M.copy_path, {})
