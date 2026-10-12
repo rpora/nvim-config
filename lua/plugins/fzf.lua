@@ -1,6 +1,20 @@
 return {
   "ibhagwan/fzf-lua",
   dependencies = { "nvim-tree/nvim-web-devicons" },
+  opts = {
+
+    grep = {
+      rg_opts = table.concat({
+        "--column",
+        "--line-number",
+        "--no-heading",
+        "--color=always",
+        "--smart-case",
+        "--hidden",
+        "--glob=!.git",
+      }, " "),
+    },
+  },
   keys = {
     {
       "<leader>sf",
@@ -46,6 +60,7 @@ return {
       end,
       desc = "FZF Buffers",
     },
+    -- Diagnostics
     {
       "<leader>sd",
       function()
@@ -60,6 +75,7 @@ return {
       end,
       desc = "FZF Diagnostics Workspace",
     },
+    -- Symbols
     {
       "<leader>ss",
       function()
@@ -97,13 +113,5 @@ return {
       end,
       desc = "FZF LSP References",
     },
-    {
-      "<leader>gw",
-      function()
-        require("fzf-lua").lsp_workspace_symbols()
-      end,
-      desc = "FZF LSP References",
-    },
   },
-  opts = {},
 }

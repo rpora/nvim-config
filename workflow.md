@@ -57,8 +57,7 @@ lua/
         ├── prompt.lua
         ├── git.lua
         ├── diagnostics.lua
-        ├── quickfix.lua
-        └── annotations.lua
+        └── quickfix.lua
 ```
 
 Le module principal doit exposer une API stable :
@@ -72,7 +71,6 @@ agent_context.copy_current_hunk()
 agent_context.copy_buffer_diagnostics()
 agent_context.copy_cursor_diagnostics()
 agent_context.copy_quickfix()
-agent_context.populate_ai_comments_quickfix()
 ```
 
 Réutiliser autant que possible les fonctions existantes de résolution de racine Git, de copie de chemin et de récupération de sélection.
@@ -599,106 +597,12 @@ Si la liste dépasse cette limite :
 - Les chemins sont relatifs lorsque possible.
 - Les entrées invalides ne font pas échouer l’ensemble.
 
-## 13. Étape 9 — Ajouter les annotations temporaires `AI:*`
+## 13. Étape 9 — Annotations `AI:*` abandonnées
 
-### Convention
+Ne pas ajouter de marqueurs `AI:*` dans le code ni de commande pour les collecter.
 
-Supporter les marqueurs :
-
-```text
-AI:QUESTION
-AI:REVIEW
-AI:CHANGE
-AI:BUG
-AI:TEST
-```
-
-Exemples :
-
-```ts
-// AI:REVIEW This fallback may hide a domain error.
-```
-
-```ts
-// AI:CHANGE
-// Extract this branch into a dedicated policy.
-```
-
-### Commande
-
-```vim
-:AiComments
-```
-
-### Mapping suggéré
-
-```text
-<leader>cA
-```
-
-### Objectif
-
-Rechercher tous les marqueurs `AI:*` dans le dépôt et les charger dans la quickfix.
-
-### Implémentation privilégiée
-
-Exécuter `rg` depuis la racine Git :
-
-```bash
-rg --vimgrep 'AI:(QUESTION|REVIEW|CHANGE|BUG|TEST)'
-```
-
-Transformer les résultats en entrées quickfix.
-
-Définir un titre explicite :
-
-```text
-AI annotations
-```
-
-Ouvrir la quickfix après population.
-
-### Exclusions
-
-Respecter les règles Git et ripgrep par défaut.
-
-Ajouter éventuellement des exclusions configurables :
-
-```lua
-ai_comment_globs = {
-  "!node_modules",
-  "!dist",
-  "!build",
-}
-```
-
-### Commande complémentaire
-
-```vim
-:CopyAiComments
-```
-
-Cette commande peut :
-
-1. reconstruire la quickfix des annotations ;
-2. produire directement une sortie Markdown ;
-3. copier cette sortie dans le presse-papiers.
-
-Format :
-
-```markdown
-## AI annotations
-
-- `app/foo.ts:42:1` — `AI:REVIEW` This fallback may hide a domain error.
-- `app/bar.ts:18:1` — `AI:TEST` Add a regression test for the empty case.
-```
-
-### Critères d’acceptation
-
-- Les cinq catégories sont reconnues.
-- La quickfix permet de naviguer entre les annotations.
-- Les résultats utilisent des chemins relatifs.
-- Aucun résultat produit une notification claire.
+Les commentaires de revue destinés à l’agent passent par Hunk : notes posées dans
+la session `hunk diff --watch`, puis lues par l’agent via le skill `hunk-review`.
 
 ## 14. Étape 10 — Ajouter le diff global du dépôt
 
@@ -796,16 +700,6 @@ require("user.codex_context").setup({
     include_staged = true,
     include_untracked = true,
   },
-
-  annotations = {
-    tags = {
-      "QUESTION",
-      "REVIEW",
-      "CHANGE",
-      "BUG",
-      "TEST",
-    },
-  },
 })
 ```
 
@@ -830,7 +724,6 @@ Conserver les mappings actuels et ajouter :
 <leader>cE    copier les diagnostics sous le curseur
 
 <leader>cq    copier la quickfix
-<leader>cA    charger les annotations AI:* dans la quickfix
 ```
 
 Éviter les conflits avec les mappings existants.
@@ -849,7 +742,6 @@ Added selection to Codex prompt: app/features/foo.ts:{20-34}
 Copied 14 diagnostics
 Quickfix copied: 37 entries
 No Git hunk under cursor
-No AI annotations found
 ```
 
 Utiliser `vim.notify` avec des niveaux adaptés :
@@ -933,14 +825,6 @@ Les erreurs ne doivent jamais laisser Neovim dans un état incohérent.
 - entrées sans fichier ;
 - liste supérieure à la limite.
 
-### Annotations
-
-- chaque catégorie `AI:*` ;
-- plusieurs annotations dans un fichier ;
-- plusieurs fichiers ;
-- aucune annotation ;
-- texte multiline après un marqueur.
-
 ## 20. Ordre d’implémentation recommandé
 
 ### Phase 1 — Fondations
@@ -975,13 +859,6 @@ Cette phase apporte le meilleur rapport valeur/complexité.
 3. Gestion des fichiers non suivis.
 4. Limites de taille.
 
-### Phase 5 — Annotations `AI:*`
-
-1. Recherche ripgrep.
-2. Population quickfix.
-3. Copie Markdown.
-4. Documentation du workflow.
-
 ## 21. Définition de terminé
 
 Le travail est terminé lorsque :
@@ -993,7 +870,6 @@ Le travail est terminé lorsque :
 - le hunk courant peut être copié ;
 - les diagnostics peuvent être copiés ;
 - la quickfix peut être copiée ;
-- les annotations `AI:*` peuvent être listées ;
 - toutes les sorties utilisent des chemins relatifs Git ;
 - toutes les sorties sont lisibles en Markdown ;
 - les erreurs fréquentes sont gérées explicitement ;

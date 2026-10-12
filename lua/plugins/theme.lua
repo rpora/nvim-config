@@ -1,5 +1,22 @@
 return {
   {
+    "rebelot/kanagawa.nvim",
+    init = function()
+      require("kanagawa").setup({
+        transparent = true,
+        colors = {
+          theme = {
+            all = {
+              ui = {
+                bg_gutter = "none",
+              },
+            },
+          },
+        },
+      })
+    end,
+  },
+  {
     "vague-theme/vague.nvim",
     init = function()
       require("vague").setup({

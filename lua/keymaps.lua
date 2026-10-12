@@ -90,9 +90,8 @@ end, { desc = "Next hunk" })
 -- Git
 vim.keymap.set("n", "<leader>cf", "<cmd>Gedit :<cr>", { desc = "Git status dans la fenêtre courante" })
 vim.keymap.set("n", "<leader>cc", "<cmd>GitHunks<cr>", { desc = "Changements Git dans la quickfix" })
--- Désactivé temporairement : <leader>cd est réservé à CopyFileDiff.
--- vim.keymap.set("n", "<leader>cd", "<cmd>Gdiffsplit<cr>", { desc = "Diff du fichier courant" })
 vim.keymap.set("n", "<leader>cu", "<cmd>Git diff HEAD -- %<cr>", { desc = "Diff unifié du fichier courant" })
+vim.keymap.set("n", "<leader>dv", ":DiffviewToggle<CR>", { desc = "Diffview" })
 
 -- Navigating beetween Windows and panes
 vim.keymap.set("n", "<C-Left>", "<c-w>h")

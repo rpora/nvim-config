@@ -1,5 +1,5 @@
 -- theme
-vim.cmd("colorscheme rose-pine")
+vim.cmd("colorscheme vague")
 vim.opt.termguicolors = true
 vim.opt.signcolumn = "yes"
 vim.opt.colorcolumn = "100"
