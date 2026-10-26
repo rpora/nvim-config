@@ -3,7 +3,7 @@ vim.g.maplocalleader = " "
 
 -- Setup lazy
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
+if not vim.uv.fs_stat(lazypath) then
   vim.fn.system({
     "git",
     "clone",
@@ -19,7 +19,7 @@ require("lazy").setup("plugins")
 require("keymaps")
 require("settings")
 require("auto-commands")
-require("custom.copy-path")
+require("custom.agent_context")
 require("custom.scratch")
 require("custom.workflow")
 require("custom.git")

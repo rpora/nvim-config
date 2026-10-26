@@ -3,7 +3,7 @@ local format_group = vim.api.nvim_create_augroup("FormatOptions", { clear = true
 vim.api.nvim_create_autocmd("FileType", {
   group = format_group,
   callback = function()
-    vim.opt_local.formatoptions:remove({ "c", "r", "o" })
+    vim.opt_local.formatoptions:remove("cro")
   end,
 })
 
@@ -29,11 +29,26 @@ vim.api.nvim_create_autocmd("BufReadPost", {
   end,
 })
 
--- Highlight the symbol under the cursor in the document
-vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
-  callback = vim.lsp.buf.document_highlight,
-})
+-- Highlight the symbol under the cursor in the document, in buffers whose LSP supports it
+local document_highlight_group = vim.api.nvim_create_augroup("LspDocumentHighlight", { clear = true })
+vim.api.nvim_create_autocmd("LspAttach", {
+  group = document_highlight_group,
+  callback = function(event)
+    local client = vim.lsp.get_client_by_id(event.data.client_id)
+    if not (client and client:supports_method("textDocument/documentHighlight", event.buf)) then
+      return
+    end
 
-vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
-  callback = vim.lsp.buf.clear_references,
+    vim.api.nvim_clear_autocmds({ group = document_highlight_group, buffer = event.buf })
+    vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+      group = document_highlight_group,
+      buffer = event.buf,
+      callback = vim.lsp.buf.document_highlight,
+    })
+    vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
+      group = document_highlight_group,
+      buffer = event.buf,
+      callback = vim.lsp.buf.clear_references,
+    })
+  end,
 })

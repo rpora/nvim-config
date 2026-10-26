@@ -2,22 +2,10 @@ return {
   {
     "neovim/nvim-lspconfig",
     dependencies = {
-      "saghen/blink.cmp",
       "williamboman/mason.nvim",
       "williamboman/mason-lspconfig.nvim",
-      "WhoIsSethDaniel/mason-tool-installer.nvim",
     },
     config = function()
-      vim.api.nvim_create_autocmd("LspAttach", {
-        group = vim.api.nvim_create_augroup("kickstart-lsp-attach", { clear = true }),
-        callback = function(event)
-          local map = function(keys, func, desc)
-            vim.keymap.set("n", keys, func, { buffer = event.buf, desc = desc })
-          end
-          map("K", vim.lsp.buf.hover, "Quick definition")
-        end,
-      })
-
       local servers = {
         ts_ls = {},
         pyright = {},
@@ -63,22 +51,14 @@ return {
         },
       }
 
-      local capabilities = vim.lsp.protocol.make_client_capabilities()
-      capabilities = require("blink.cmp").get_lsp_capabilities(capabilities)
-
+      -- blink.cmp adds its completion capabilities to every server by itself
       for server_name, server_config in pairs(servers) do
-        server_config.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server_config.capabilities or {})
         vim.lsp.config(server_name, server_config)
       end
 
-      -- Ensure the servers are installed
+      -- Install the servers, then enable them
       require("mason").setup()
-
-      -- You can add other tools here that you want Mason to install
-      -- for you, so that they are available from within Neovim.
-      local ensure_installed = vim.tbl_keys(servers or {})
-      require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
-      require("mason-lspconfig").setup()
+      require("mason-lspconfig").setup({ ensure_installed = vim.tbl_keys(servers) })
     end,
   },
 }

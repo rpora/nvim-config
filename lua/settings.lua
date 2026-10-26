@@ -1,5 +1,12 @@
--- theme
-vim.cmd("colorscheme vague")
+-- theme : choisi par la commande `theme` (~/.local/bin/theme), défini dans ~/.config/themes
+local function current_colorscheme()
+  local ok, theme = pcall(function()
+    local name = vim.fn.readfile(vim.fn.expand("~/.local/state/theme/current"))[1]
+    return vim.fn.json_decode(vim.fn.readfile(vim.fn.expand("~/.config/themes/" .. name .. ".json")))
+  end)
+  return ok and theme.nvim or "vague"
+end
+vim.cmd("colorscheme " .. current_colorscheme())
 vim.opt.termguicolors = true
 vim.opt.signcolumn = "yes"
 vim.opt.colorcolumn = "100"
@@ -18,11 +25,13 @@ vim.opt.list = true
 vim.opt.listchars = {
   tab = "│ ",
   leadmultispace = "│ ",
+  trail = "·",
 }
 
 -- history
 vim.o.undofile = true
 vim.o.swapfile = false
+vim.cmd.packadd("nvim.undotree")
 
 -- search
 vim.o.ignorecase = true
@@ -41,6 +50,8 @@ vim.o.cursorline = true
 vim.opt.cursorlineopt = "number,line"
 vim.opt.scrolloff = 10
 vim.opt.updatetime = 400
+-- Border on floating windows (hover, completion menu and docs, diagnostics)
+vim.o.winborder = "rounded"
 
 -- Misc
 vim.o.clipboard = "unnamedplus"
@@ -62,9 +73,12 @@ vim.diagnostic.config({
   float = {
     focusable = false,
     style = "minimal",
-    border = "rounded",
     source = true,
   },
   virtual_text = false,
-  jump = { on_jump = true },
+  jump = {
+    on_jump = function(_, bufnr)
+      vim.diagnostic.open_float({ bufnr = bufnr, scope = "cursor", focus = false })
+    end,
+  },
 })

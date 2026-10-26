@@ -1,12 +1,13 @@
 return {
   {
     "stevearc/conform.nvim",
-    event = { "BufReadPre", "BufNewFile" },
+    event = "BufWritePre",
+    cmd = "ConformInfo",
     keys = {
       {
         "<leader>f",
         function()
-          require("conform").format({ async = true, lsp_fallback = true })
+          require("conform").format({ async = true, lsp_format = "fallback" })
         end,
         mode = "",
         desc = "Format buffer",
@@ -15,7 +16,7 @@ return {
     opts = {
       format_on_save = {
         -- I recommend these options. See :help conform.format for details.
-        lsp_fallback = true,
+        lsp_format = "fallback",
         timeout_ms = 1000,
       },
       notify_on_error = false,

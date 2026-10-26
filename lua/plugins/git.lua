@@ -6,7 +6,4 @@ return {
       attach_to_untracked = true,
     },
   },
-  {
-    "dlyongemallo/diffview-plus.nvim",
-  },
 }

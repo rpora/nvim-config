@@ -1,7 +1,4 @@
 return {
-  -- Undo tree
-  "mbbill/undotree",
-
   -- Explorer
   {
     "stevearc/oil.nvim",

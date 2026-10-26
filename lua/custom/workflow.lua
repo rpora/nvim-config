@@ -193,31 +193,82 @@ local function parse_knip_output(output)
   return items
 end
 
----Build an ESLint command.
----@param targets string[]
----@return string[]
-local function build_eslint_command(targets)
-  local command = { "pnpm", "exec", "eslint" }
-  vim.list_extend(command, targets)
-  vim.list_extend(command, { "--format", "json" })
-  return command
-end
+---Quality gates whose diagnostics can be loaded into the quickfix list.
+---`parse` returns quickfix items, or nil and an error message.
+local checks = {
+  typescript = {
+    title = "TypeScript",
+    command = function()
+      return { "pnpm", "tsc", "--pretty", "false" }
+    end,
+    parse = function(result)
+      return parse_typescript_output(table.concat({ result.stdout or "", result.stderr or "" }, "\n"))
+    end,
+  },
+  eslint = {
+    title = "ESLint",
+    command = function(targets)
+      local command = { "pnpm", "exec", "eslint" }
+      vim.list_extend(command, #targets > 0 and targets or { "." })
+      vim.list_extend(command, { "--format", "json" })
+      return command
+    end,
+    parse = function(result)
+      return parse_eslint_output(result.stdout or "")
+    end,
+  },
+  knip = {
+    title = "Knip",
+    command = function()
+      return { "pnpm", "knip", "--reporter", "json", "--no-progress", "--no-exit-code" }
+    end,
+    parse = function(result)
+      return parse_knip_output(result.stdout or "")
+    end,
+  },
+}
 
----Build a Knip command with machine-readable output.
----@return string[]
-local function build_knip_command()
-  return { "pnpm", "knip", "--reporter", "json", "--no-progress", "--no-exit-code" }
-end
+---Run quality gates in parallel and load their combined diagnostics into the quickfix list.
+---A gate whose output cannot be parsed is reported and left out.
+---@param names string[] keys of `checks`
+---@param targets? string[] ESLint targets, the whole project by default
+local function run_checks(names, targets)
+  local title = table.concat(
+    vim.tbl_map(function(name)
+      return checks[name].title
+    end, names),
+    " + "
+  )
+  vim.notify(("%s: %s en cours..."):format(title, #names > 1 and "checks" or "check"), vim.log.levels.INFO)
 
----Run a command asynchronously and return its output.
----@param command string[]
----@param on_done fun(result: vim.SystemCompleted)
-local function run_command(command, on_done)
-  vim.system(command, { text = true }, function(result)
-    vim.schedule(function()
-      on_done(result)
-    end)
-  end)
+  local pending = #names
+  local items = {}
+  local parsed = false
+
+  for _, name in ipairs(names) do
+    local check = checks[name]
+    vim.system(
+      check.command(targets or {}),
+      { text = true },
+      vim.schedule_wrap(function(result)
+        local check_items, err = check.parse(result)
+        if check_items then
+          vim.list_extend(items, check_items)
+          parsed = true
+        else
+          vim.notify(err, vim.log.levels.ERROR)
+          if result.stderr and result.stderr ~= "" then
+            vim.notify(result.stderr, vim.log.levels.ERROR)
+          end
+        end
+
+        pending = pending - 1
+        if pending == 0 and parsed then
+          set_diagnostics_quickfix(title, items)
+        end
+      end)
+    )
+  end
 end
 
 ---Remove the current quickfix entry, like marking a todo item as done.
@@ -282,11 +333,7 @@ end
 ---Run `pnpm tsc --pretty false` and populate quickfix with TypeScript errors.
 ---Expected format: `file(line,col): error TSxxxx: message`
 function M.typescript_to_quickfix()
-  vim.notify("TypeScript: check en cours...", vim.log.levels.INFO)
-  run_command({ "pnpm", "tsc", "--pretty", "false" }, function(result)
-    local output = table.concat({ result.stdout or "", result.stderr or "" }, "\n")
-    set_diagnostics_quickfix("TypeScript", parse_typescript_output(output))
-  end)
+  run_checks({ "typescript" })
 end
 
 ---Run ESLint and populate quickfix with lint diagnostics.
@@ -294,41 +341,12 @@ end
 ---  - `:Ceslint` to lint the current project.
 ---  - `:Ceslint app/foo.ts app/bar.tsx` to lint explicit targets.
 function M.eslint_to_quickfix(opts)
-  local targets = opts.fargs or {}
-  if #targets == 0 then
-    targets = { "." }
-  end
-
-  vim.notify("ESLint: check en cours...", vim.log.levels.INFO)
-  run_command(build_eslint_command(targets), function(result)
-    local items, err = parse_eslint_output(result.stdout or "")
-    if not items then
-      vim.notify(err, vim.log.levels.ERROR)
-      if result.stderr and result.stderr ~= "" then
-        vim.notify(result.stderr, vim.log.levels.ERROR)
-      end
-      return
-    end
-
-    set_diagnostics_quickfix("ESLint", items)
-  end)
+  run_checks({ "eslint" }, opts.fargs)
 end
 
 ---Run Knip and populate quickfix with unused-code diagnostics.
 function M.knip_to_quickfix()
-  vim.notify("Knip: check en cours...", vim.log.levels.INFO)
-  run_command(build_knip_command(), function(result)
-    local items, err = parse_knip_output(result.stdout or "")
-    if not items then
-      vim.notify(err, vim.log.levels.ERROR)
-      if result.stderr and result.stderr ~= "" then
-        vim.notify(result.stderr, vim.log.levels.ERROR)
-      end
-      return
-    end
-
-    set_diagnostics_quickfix("Knip", items)
-  end)
+  run_checks({ "knip" })
 end
 
 ---Run TypeScript, ESLint and Knip checks, then populate one quickfix list.
@@ -336,56 +354,7 @@ end
 ---  - `:Ccheck` to check the current project.
 ---  - `:Ccheck app/foo.ts app/bar.tsx` to restrict ESLint targets only.
 function M.check_to_quickfix(opts)
-  local targets = opts.fargs or {}
-  if #targets == 0 then
-    targets = { "." }
-  end
-
-  vim.notify("TypeScript + ESLint + Knip: checks en cours...", vim.log.levels.INFO)
-
-  local pending = 3
-  local items = {}
-
-  local function finish()
-    pending = pending - 1
-    if pending == 0 then
-      set_diagnostics_quickfix("TypeScript + ESLint + Knip", items)
-    end
-  end
-
-  run_command({ "pnpm", "tsc", "--pretty", "false" }, function(result)
-    local output = table.concat({ result.stdout or "", result.stderr or "" }, "\n")
-    vim.list_extend(items, parse_typescript_output(output))
-    finish()
-  end)
-
-  run_command(build_eslint_command(targets), function(result)
-    local eslint_items, err = parse_eslint_output(result.stdout or "")
-    if not eslint_items then
-      vim.notify(err, vim.log.levels.ERROR)
-      if result.stderr and result.stderr ~= "" then
-        vim.notify(result.stderr, vim.log.levels.ERROR)
-      end
-    else
-      vim.list_extend(items, eslint_items)
-    end
-
-    finish()
-  end)
-
-  run_command(build_knip_command(), function(result)
-    local knip_items, err = parse_knip_output(result.stdout or "")
-    if not knip_items then
-      vim.notify(err, vim.log.levels.ERROR)
-      if result.stderr and result.stderr ~= "" then
-        vim.notify(result.stderr, vim.log.levels.ERROR)
-      end
-    else
-      vim.list_extend(items, knip_items)
-    end
-
-    finish()
-  end)
+  run_checks({ "typescript", "eslint", "knip" }, opts.fargs)
 end
 
 --- Commands
